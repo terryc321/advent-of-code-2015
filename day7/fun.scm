@@ -227,62 +227,229 @@ decimal to binary conversion
 
 ;; argument checking
 
+(define symbols '())
+(define constants '())
+(define store #f)
+
+(define (maybe-symbol s)
+  (cond
+   ((all-chars s) (cond
+		   ((member (string->symbol s) symbols) #f)
+		   (#t (set! symbols (cons (string->symbol s) symbols)))))
+   ((all-digits s) (cond
+		    ((member (string->number s) constants) #f)
+		    (#t (set! constants (cons (string->number s) constants)))))
+   (#t #f)))
+
 
 
 ;; pre-processing stage
 ;; collect all wire symbols
 ;; 
 (define (pre)
+  (set! symbols '())
   (let ((f 1))
     (dolist (x input)
-	    (format #t "processing : ~a ~%" x)
+	    ;;(format #t "processing : ~a ~%" x)
 	    (cond
 	     ((m-not x) (let ((s1 (match:substring m 1))
 			      (s2 (match:substring m 2)))
-			  (format #t "NOT check s1 = [~a] : s2 = [~a] ~%" s1 s2)
-			  (assert (all-chars s1))
-			  (assert (all-chars s2))))
+			  ;;(format #t "NOT check s1 = [~a] : s2 = [~a] ~%" s1 s2)
+			  (maybe-symbol s1)
+			  (maybe-symbol s2)			  
+			  ))
 	     ((m-and x) (let ((s1 (match:substring m 1))
 			      (s2 (match:substring m 2))
 			      (s3 (match:substring m 3)))
-			  (format #t "AND check s1 = [~a] : s2 = [~a] : s3 = [~a] ~%" s1 s2 s3)
-			  (all-chars s1)
-			  (all-chars s2)
-			  (assert (all-chars s3))
+			  ;;(format #t "AND check s1 = [~a] : s2 = [~a] : s3 = [~a] ~%" s1 s2 s3)
+			  (maybe-symbol s1)
+			  (maybe-symbol s2)
+			  (maybe-symbol s3)
 			  ))
 	     ((m-r-shift x)
 	      (let ((s1 (match:substring m 1))
 		    (s2 (match:substring m 2))
 		    (s3 (match:substring m 3)))
-		(format #t "RSHIFT check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
-		(all-chars s1)
-		(all-digits s2)
-		(all-chars s3)
+		;;(format #t "RSHIFT check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
+		;; (all-chars s1)
+		;; (all-digits s2)
+		;; (all-chars s3)
+		(maybe-symbol s1)
+		(maybe-symbol s2)
+		(maybe-symbol s3)
+			  
 		))	      
 	     ((m-l-shift x)
 	      (let ((s1 (match:substring m 1))
 		    (s2 (match:substring m 2))
 		    (s3 (match:substring m 3)))
-		(format #t "LSHIFT check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
-		(all-chars s1)
-		(all-digits s2)
-		(all-chars s3)
+		;;(format #t "LSHIFT check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
+		;; (all-chars s1)
+		;; (all-digits s2)
+		;; (all-chars s3)
+		(maybe-symbol s1)
+		(maybe-symbol s2)
+		(maybe-symbol s3)
+		
+		
 		))
 	     ((m-or x)
 	      (let ((s1 (match:substring m 1))
 		    (s2 (match:substring m 2))
 		    (s3 (match:substring m 3)))
-		(format #t "OR check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
-		(all-chars s1)
-		(all-chars s2)
-		(all-chars s3)
+		;;(format #t "OR check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
+		;; (all-chars s1)
+		;; (all-chars s2)
+		;; (all-chars s3)
+		(maybe-symbol s1)
+		(maybe-symbol s2)
+		(maybe-symbol s3)
 		))
 	     ((m-dir x)
 	      (let ((s1 (match:substring m 1))
 		    (s2 (match:substring m 2)))
-		(format #t "DIRECT check s1 = [~a] : s2 = [~a] ~%" s1 s2)
-		(all-digits s1)
-		(all-chars s2)))
+		;;(format #t "DIRECT check s1 = [~a] : s2 = [~a] ~%" s1 s2)
+		;; (all-digits s1)
+		;; (all-chars s2)
+		(maybe-symbol s1)
+		(maybe-symbol s2)
+		
+		))
+	     (#t (error pre "no match"))
+	     ))))
+
+(define (lookup-symbol2 s xs n)
+  (cond
+   ((null? xs) (error "lookup-symbol2" (list "symbol not found " s xs n)))
+   ((eq? s (car xs)) n)
+   (#t (lookup-symbol2 s (cdr xs) (+ n 1)))))
+
+(define (sym-index s)
+  (lookup-symbol2 (string->symbol s) symbols 0))
+
+
+(define (pre2)
+  (set! store (make-array #f (length symbols)))
+  (let ((f 1))
+    (dolist (x input)
+	    ;;(format #t "processing : ~a ~%" x)
+	    (cond
+	     ((m-not x) (let ((s1 (match:substring m 1))
+			      (s2 (match:substring m 2)))
+			  ;;(format #t "NOT check s1 = [~a] : s2 = [~a] ~%" s1 s2)
+
+			  (cond
+			   ((and (all-chars s1)(all-chars s2))
+			    (format #t "(not16 (sym ~a ~a) (sym ~a ~a))~%"
+				    (sym-index s1) s1
+				    (sym-index s2) s2))
+			   (#t (error "pre2 m-not" (list "s1 s2 not symbols"))))
+			  
+			  ))
+	     ((m-and x) (let ((s1 (match:substring m 1))
+			      (s2 (match:substring m 2))
+			      (s3 (match:substring m 3)))
+			  ;;(format #t "AND check s1 = [~a] : s2 = [~a] : s3 = [~a] ~%" s1 s2 s3)
+			  (cond
+			   ((and (all-chars s1)(all-chars s2)(all-chars s3))
+			    (format #t "(and16 (sym ~a ~a) (sym ~a ~a) (sym ~a ~a))~%"
+				    (sym-index s1) s1
+				    (sym-index s2) s2
+			            (sym-index s3) s3
+				    ))
+			   ((and (all-digits s1)(all-chars s2)(all-chars s3))
+			    (format #t "(and16 (const ~a) (sym ~a ~a) (sym ~a ~a))~%"
+				    (string->number s1)
+				    (sym-index s2) s2
+			            (sym-index s3) s3
+				    ))
+			   (#t (error "pre2 m-and" (list "s1 s2 s3 not symbols" s1 s2 s3))))
+			  
+			  
+			  ))
+	     ((m-r-shift x)
+	      (let ((s1 (match:substring m 1))
+		    (s2 (match:substring m 2))
+		    (s3 (match:substring m 3)))
+		;;(format #t "RSHIFT check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
+
+			  (cond
+			   ((and (all-chars s1)(all-digits s2)(all-chars s3))
+			    (format #t "(shift-r (sym ~a ~a) (const ~a) (sym ~a ~a))~%"
+				    (sym-index s1) s1
+				    (string->number s2)
+			            (sym-index s3) s3
+				    ))			   
+			   (#t (error "pre2 m-r-shift" (list "s1 s2 s3 not symbols" s1 s2 s3))))
+		
+		
+		))	      
+	     ((m-l-shift x)
+	      (let ((s1 (match:substring m 1))
+		    (s2 (match:substring m 2))
+		    (s3 (match:substring m 3)))
+		;;(format #t "LSHIFT check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
+
+			  (cond
+			   ((and (all-chars s1)(all-digits s2)(all-chars s3))
+			    (format #t "(shift-l (sym ~a ~a) (const ~a) (sym ~a ~a))~%"
+				    (sym-index s1) s1
+				    (string->number s2)
+			            (sym-index s3) s3
+				    ))			   
+			   (#t (error "pre2 m-l-shift" (list "s1 s2 s3 not symbols" s1 s2 s3))))
+		
+		
+		))
+	     ((m-or x)
+	      (let ((s1 (match:substring m 1))
+		    (s2 (match:substring m 2))
+		    (s3 (match:substring m 3)))
+		;;(format #t "OR check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
+
+			  (cond
+			   ((and (all-chars s1)(all-chars s2)(all-chars s3))
+			    (format #t "(or16 (sym ~a ~a) (sym ~a ~a) (sym ~a ~a))~%"
+				    (sym-index s1) s1
+				    (sym-index s2) s2
+			            (sym-index s3) s3
+				    ))
+			   ;; ((and (all-digits s1)(all-chars s2)(all-chars s3))
+			   ;;  (format #t "(or16 (const ~a) (sym ~a ~a) (sym ~a ~a))~%"
+			   ;; 	    (string->number s1)
+			   ;; 	    (sym-index s2) s2
+			   ;;          (sym-index s3) s3
+			   ;; 	    ))
+			   (#t (error "pre2 m-or" (list "s1 s2 s3 not symbols" s1 s2 s3))))
+		
+		
+		))
+	     ((m-dir x)
+	      (let ((s1 (match:substring m 1))
+		    (s2 (match:substring m 2)))
+		;;(format #t "DIRECT check s1 = [~a] : s2 = [~a] ~%" s1 s2)
+
+		(cond
+		 ((and (all-chars s1)(all-chars s2))
+		  (format #t "(assign (sym ~a ~a) (sym ~a ~a))~%"
+			  (sym-index s1) s1
+			  (sym-index s2) s2
+			  ))
+		 ((and (all-digits s1)(all-chars s2))
+		  (format #t "(assign (const ~a) (sym ~a ~a))~%"
+			  (string->number s1)
+			  (sym-index s2) s2
+			  ))
+		 ;; ((and (all-digits s1)(all-chars s2)(all-chars s3))
+		 ;;  (format #t "(or16 (const ~a) (sym ~a ~a) (sym ~a ~a))~%"
+		 ;; 	    (string->number s1)
+		 ;; 	    (sym-index s2) s2
+		 ;;          (sym-index s3) s3
+		 ;; 	    ))
+		 (#t (error "pre2 m-dir" (list "s1 not digits s2 not symbol" s1 s2))))
+		
+		
+		))
 	     (#t (error pre "no match"))
 	     ))))
 
@@ -292,6 +459,84 @@ decimal to binary conversion
 
 
 
+;; (define (pre3)
+;;   (set! store (make-array #f (length symbols)))
+;;   (let ((f 1))
+;;     (dolist (x input)
+;; 	    ;;(format #t "processing : ~a ~%" x)
+;; 	    (cond
+;; 	     ((m-not x) (let ((s1 (match:substring m 1))
+;; 			      (s2 (match:substring m 2)))
+;; 			  ;;(format #t "NOT check s1 = [~a] : s2 = [~a] ~%" s1 s2)
+;; 			  (maybe-symbol s1)
+;; 			  (maybe-symbol s2)			  
+;; 			  ))
+;; 	     ((m-and x) (let ((s1 (match:substring m 1))
+;; 			      (s2 (match:substring m 2))
+;; 			      (s3 (match:substring m 3)))
+;; 			  ;;(format #t "AND check s1 = [~a] : s2 = [~a] : s3 = [~a] ~%" s1 s2 s3)
+;; 			  (maybe-symbol s1)
+;; 			  (maybe-symbol s2)
+;; 			  (maybe-symbol s3)
+;; 			  ))
+;; 	     ((m-r-shift x)
+;; 	      (let ((s1 (match:substring m 1))
+;; 		    (s2 (match:substring m 2))
+;; 		    (s3 (match:substring m 3)))
+;; 		;;(format #t "RSHIFT check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
+;; 		;; (all-chars s1)
+;; 		;; (all-digits s2)
+;; 		;; (all-chars s3)
+;; 		(maybe-symbol s1)
+;; 		(maybe-symbol s2)
+;; 		(maybe-symbol s3)
+			  
+;; 		))	      
+;; 	     ((m-l-shift x)
+;; 	      (let ((s1 (match:substring m 1))
+;; 		    (s2 (match:substring m 2))
+;; 		    (s3 (match:substring m 3)))
+;; 		;;(format #t "LSHIFT check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
+;; 		;; (all-chars s1)
+;; 		;; (all-digits s2)
+;; 		;; (all-chars s3)
+;; 		(maybe-symbol s1)
+;; 		(maybe-symbol s2)
+;; 		(maybe-symbol s3)
+		
+		
+;; 		))
+;; 	     ((m-or x)
+;; 	      (let ((s1 (match:substring m 1))
+;; 		    (s2 (match:substring m 2))
+;; 		    (s3 (match:substring m 3)))
+;; 		;;(format #t "OR check s1 = [~a] : s2 = [~a] : s3 = [~a]~%" s1 s2 s3)
+;; 		;; (all-chars s1)
+;; 		;; (all-chars s2)
+;; 		;; (all-chars s3)
+;; 		(maybe-symbol s1)
+;; 		(maybe-symbol s2)
+;; 		(maybe-symbol s3)
+;; 		))
+;; 	     ((m-dir x)
+;; 	      (let ((s1 (match:substring m 1))
+;; 		    (s2 (match:substring m 2)))
+;; 		;;(format #t "DIRECT check s1 = [~a] : s2 = [~a] ~%" s1 s2)
+;; 		;; (all-digits s1)
+;; 		;; (all-chars s2)
+;; 		(maybe-symbol s1)
+;; 		(maybe-symbol s2)
+		
+;; 		))
+;; 	     (#t (error pre "no match"))
+;; 	     ))))
+
+
+(define (run)
+  (pre)
+  (pre2)
+  ;;(pre3)
+  )
 
 
     

@@ -1,0 +1,34 @@
+
+infix operators
+------------------
+x AND y
+
+x OR y
+
+x LSHIFT N
+
+y RSHIFT N
+
+x -> y 
+
+prefix operators
+
+NOT x
+
+tokens
+-----------
+AND
+OR
+NOT
+LSHIFT
+RSHIFT
+->
+variable [a-z]+
+
+
+whilst LALR would be nice didnt understand it fully enough
+fell back to reg ex matching
+
+
+
+
