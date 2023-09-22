@@ -1,0 +1,21 @@
+(
+(sprinkles 5 -1 0 0 5)
+(peanut -1 3 0 0 1)
+(frosting 0 -1 4 0 6)
+(sugar -1 0 0 2 8)
+)
+
+#|
+
+Sprinkles: capacity 5, durability -1, flavor 0, texture 0, calories 5
+PeanutButter: capacity -1, durability 3, flavor 0, texture 0, calories 1
+Frosting: capacity 0, durability -1, flavor 4, texture 0, calories 6
+Sugar: capacity -1, durability 0, flavor 0, texture 2, calories 8
+
+ignore last index calories
+
+5*a + -1*a + 0*a + -1*a
+a( 5 + -1 + 0 + -1)
+3 a
+
+|#

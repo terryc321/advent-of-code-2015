@@ -1,0 +1,17 @@
+
+puzzle is worded incorrectly
+
+as those items not mentioned on the list are non zero
+
+vizslas 0
+akitas should also be zero too
+no aunt with vizslas 0 akitas 0
+
+in any case
+filtering puzzle
+if item is mentioned with respective sue , the values should match
+
+only sue 373 survives the filtering
+
+part 2 - adjust filtering , see if another sue survives
+
