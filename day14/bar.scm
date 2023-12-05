@@ -290,3 +290,79 @@ expect output to be sorted ??
 scheme@(guile-user) [2]> 
 |#
 
+(define (points-race n)
+  (let ((race-limit n)) ;; n seconds race
+  (define (foo x)
+    (let ((name (car x))
+	  (flys (second x))
+	  (duration (third x))
+	  (sleeps (fourth x)))
+      (list name (model-deer name flys duration sleeps race-limit))))
+  (sort (map foo input)
+	(lambda (x y) (>= (second x)(second y))))))
+
+(define (vixen-in-lead? outcome n)
+  (let* ((m (apply max (map second outcome)))
+	 (q (= m (second (assoc 'Vixen outcome)))))
+    q))
+
+(define (deer-in-lead? deer outcome n)
+  (let* ((m (apply max (map second outcome)))
+	 (q (= m (second (assoc deer outcome)))))
+    (cond
+     (q 1)
+     (#t 0))))
+
+
+(define table (make-vector 10 0))
+
+(define (inc deer n)
+  (let* ((alist (map list (map first input) (iota (length input))))
+	 (index (second (assoc deer alist))))
+    (vector-set! table index (+ n (vector-ref table index)))))
+
+(define (recur n)
+  (cond
+   ((>= n 2504) #f)
+   (#t 
+    (let ((outcome (points-race n)))
+      ;;(format #t "~a ~%" outcome)
+      (map (lambda (deer)
+	     (inc deer (deer-in-lead? deer outcome n)))
+	   '(Vixen Rudolph Donner Blitzen Comet Cupid Dasher Dancer Prancer))
+      (recur (+ n 1))))))
+
+#|
+think problem reduces to is vixen in the lead at time stamp ? 
+if so add 1
+add up all times vixen is in the lead = vixens score = winning reindeer score.
+
+|#
+
+
+(define (brute)
+  (set! table (make-vector 10 0))
+  (recur 1)
+  (format #t "~a ~%" table)
+  (format #t "~a ~%" (map list '(Vixen Rudolph Donner Blitzen Comet Cupid Dasher Dancer Prancer)
+			  (vector->list table)))
+  )
+
+#|
+
+really puzzle should have said what reindeer has most points after 2503 seconds .
+
+((Vixen 469) (Rudolph 188) (Donner 589) (Blitzen 1256) (Comet 158) (Cupid 307) (Dasher 9) (Dancer 0) (Prancer 504)) 
+
+blitzen has 1256 points
+accepted answer
+
+|#
+
+
+#|
+(map list '(Vixen Rudolph Donner Blitzen Comet Cupid Dasher Dancer Prancer)
+     (iota (length '(Vixen Rudolph Donner Blitzen Comet Cupid Dasher Dancer Prancer))))
+;; ((Vixen 0) (Rudolph 1) (Donner 2) (Blitzen 3) (Comet 4) (Cupid 5) (Dasher 6) (Dancer 7) (Prancer 8))
+|#
+     
