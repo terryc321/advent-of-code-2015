@@ -186,8 +186,8 @@ begin with value of 0
 
 (define run-input
   (lambda ()
-    (let* ((a 0)
-	   (b 0)
+    (let* ((a 1) ;; starts a instead --- part 1 put a 0 here --- part 2 put a 1 here --- 
+	   (b 0) 
 	   (ip 0)
 	   (prog (list
 		  (jio a  +16)
