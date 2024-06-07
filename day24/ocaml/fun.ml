@@ -38,23 +38,23 @@ len ['a';'b';'c'];;
 
 
 (* as is an ocaml reserved word  -- ?? *)
-let rec loop x a b c =
+let rec lup x a b c =
   if x = [] then ()
   else begin
-       let _ = loop_a x a b c ;
-       let _ = loop_b x a b c ;
-         let _ = loop_c x a b c ;
+       let _ = loopa x a b c ;
+       let _ = loopb x a b c ;
+       let _ = loopc x a b c ;
            ()
        end 
 and
-  loop_a x a b c =  let v = List.hd x ;
-                    let a2 = { nos = v :: a.nos ; len = a.len + 1 ; sum = a.sum + v ; prod = a.prod * v }  in loop (List.tl x) a2 b c 
+  loopa x a b c =  let v = List.hd x ;
+                    let a2 = { nos = v :: a.nos ; len = a.len + 1 ; sum = a.sum + v ; prod = a.prod * v }  in lup (List.tl x) a2 b c 
 and
-  loop_b x a b c =  let v = List.hd x ;
-                    let b2 = { nos = v :: b.nos ; len = b.len + 1 ; sum = b.sum + v ; prod = b.prod * v }  in loop (List.tl x) a b2 c 
+  loopb x a b c =  let v = List.hd x ;
+                    let b2 = { nos = v :: b.nos ; len = b.len + 1 ; sum = b.sum + v ; prod = b.prod * v }  in lup (List.tl x) a b2 c 
 and
-  loop_c x a b c =  let v = List.hd x ;
-                      let c2 = { nos = v :: c.nos ; len = c.len + 1 ; sum = c.sum + v ; prod = c.prod * v }  in loop (List.tl x) a b c2 ;;
+  loopc x a b c =  let v = List.hd x ;
+                      let c2 = { nos = v :: c.nos ; len = c.len + 1 ; sum = c.sum + v ; prod = c.prod * v }  in lup (List.tl x) a b c2 ;;
                         
 
 
