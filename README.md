@@ -2,7 +2,6 @@
 
 ** Coupling
 
-
 solutions in multiple languages
 
 at moment haskell simply doing map f xs , with adder possibly
@@ -15,3 +14,10 @@ using no inherit capabilities ?
 lets get the solutions in haskell code first round
 then figure out if we can improve the solutions , perhaps
 
+** Guile , Chicken scheme
+
+both require their own flavour of scheme 
+is it possible to build a common infra-structure like slib 
+whatever happened to slib anyway ?
+
+** 
