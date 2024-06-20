@@ -1,5 +1,9 @@
 * Advent of code 2015
 
+** Haskell libraries 
+using cabal able to use MD5 implementation , first major breakthrough using haskell
+as of yet , still just using haskell like "poking the bear" 
+
 ** Coupling
 
 solutions in multiple languages
