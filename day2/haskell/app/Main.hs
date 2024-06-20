@@ -25,9 +25,28 @@ fun [] n = n
 fun ( hd : t) n = case hd of
                 (l,w,h) -> fun t (n + fun2 l w h)
 
+-- compute all possible perimeters only 3 of them , take smallest
+-- then add the volume of parcel length * width * height
+fun4 :: Int -> Int -> Int -> Int
+fun4 l w h = let l2 = l + l
+                 w2 = w + w 
+                 h2 = h + h
+                 d = minimum [l2 + w2 , l2 + h2 , w2 + h2] 
+                 e = l * w * h
+             in     d + e
+
+fun3 :: [ (Int,Int,Int) ] -> Int -> Int
+fun3 [] n = n
+fun3 ( hd : t) n = case hd of
+                (l,w,h) -> fun3 t (n + fun4 l w h)
+
+
+--- the solutions 
 solution1 :: Int
 solution1 = fun input 0
 
+solution2 :: Int
+solution2 = fun3 input 0 
 
 main :: IO ()
 main = putStrLn "Hello, Haskell!"
