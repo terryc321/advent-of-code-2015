@@ -1,44 +1,10 @@
-module MyLib (someFunc) where
+module MyLib2 (someFunc) where
 
 import Data.Word (Word16)
 import Data.Bits
 
--- --- some values
--- a :: Word16
--- a = 1
--- 
--- b :: Word16
--- b = 2
--- 
--- -- bitwise and
--- c :: Word16
--- c = a .&. b
--- 
--- --- bitwise inclusive or
--- d :: Word16
--- d = a .|. b
-
-
--- --- bitwise shift left
--- f :: Word16
--- f = leftS a 3
--- 
--- -- bitwise shift right
--- g :: Word16
--- g = rightS f 2
--- 
--- --- bitwise complement bitwise NOT , flips all bits
--- h :: Word16
--- h = complement f
-
---- actual puzzle in literal code below
--- renames required do , if , 
-
---- shifts
---- bizarre scheme code emitted
--- leftS Int Sym
--- rightS Sym Int  ??! are u mad ...
-
+--- part 2 of puzzle
+--- set sym_b to be 16076 , the answer to part 1
 
 leftS :: Bits a => a -> Int -> a
 leftS x n = shift x n
@@ -46,6 +12,8 @@ leftS x n = shift x n
 rightS :: Bits a => a -> Int -> a
 rightS x n = shift x (0 - n)
 
+s_b :: Word16
+s_b =  16076  --- was 19138 
 
 
 s_ls :: Word16
@@ -210,8 +178,6 @@ s_jc = s_iv .|. s_jb
 s_hw :: Word16
 s_hw = s_hv .|. s_hu
 
-s_b :: Word16
-s_b =  19138 
 
 s_gm :: Word16
 s_gm = rightS s_gj 5
@@ -1069,10 +1035,17 @@ someFunc :: IO ()
 someFunc = do putStrLn ("Final value on wire 'a' is  : [ " ++ show s_a ++ " ] "  )
 
 
+
 -- Hello, Haskell!
 -- Final value on wire 'a' is  : [ 16076 ] 
+-- Final value on wire 'a' is  : [ 2797 ] 
 -- 
--- real	0m0.045s
--- user	0m0.019s
--- sys	0m0.013s
+-- real	0m0.032s
+-- user	0m0.014s
+-- sys	0m0.002s
+
+-- can take advantage of declarative nature of haskell
+-- whereas in scheme each expression strictly evaluated as soon as assignment is met
+-- whereass haskell can have multiple parallel definitions
+-- they are not evaluated until required
 
