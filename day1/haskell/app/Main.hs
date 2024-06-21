@@ -85,7 +85,7 @@ reg = do _ <- runTestTT tests
 
 
 -- the solutions 
-solution1 :: Int A -- ^ Solution to part 1
+solution1 :: Int -- ^ Solution to part 1
 solution1 = elev input
 
 solution2 :: Maybe Int -- ^ Solution to part 2 
