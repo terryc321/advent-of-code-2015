@@ -1,4 +1,17 @@
+#|
 
+can we just not make a direct translation of code ...
+
+(and16 (sym 338 lf) (sym 337 lq) (sym 336 ls))
+becomes haskell ...
+
+ls :: Word16
+ls = lf .&. lq
+
+
+
+
+|#
 
 (use-modules (ice-9 format)) ;; format common lisp 
 (use-modules (ice-9 pretty-print)) ;; pretty-print
@@ -14,6 +27,8 @@
 
 ;; pattern matcher ?
 (use-modules (ice-9 match))
+
+
 
 ;; --------------------- macros --------------------------
 (define-macro (dolist varls . body)
@@ -538,11 +553,30 @@ decimal to binary conversion
   ;;(pre3)
   )
 
+;; (run)
+;; (pre)
+;; (+ 1 2)
+;; symbols
 
-    
+;; all the smymbols
+'(hn h ie l jt gd z bg dp jw jy ic jz jx ac cs d q cq cu gh w jv kj hx
+kv bf kw hj eq ct ae ad ab y aw ju ik ih if id p be hf ep dv aa cl cx
+cw cv eh ag bt bs fk kc cm kz am lu lw dm cz bw jf lc la en al ee ec
+ds ev im r ar dx dt dw iq bh hy cr cp cj lr gs du da lo aj ew he br bq
+fl jg ky kx aq lp cy bd bc lv jl ir lt bj ji jh gv gk dh ga fz fo jr
+je jd ka ak x ex ei do dn lk ba v fw f e gi ch hp ho hm li dl dk dc gu
+gt gr gy ki hr fi kk fh dr dq ib fd kp kn km ek ej kf iy ix cg ca c gl
+ig gc gb fp hb ha bb az at fr fq cf hd gz ja iz a lx eg ef dz dj ez ey
+lb kh ia hz m k ln fg db ay lh bl as ai ah af in il bm bi cb bz ce bk
+le ld ap an ao er dy ht hs hq gm hw hu hv jc jb iv ft gx gw bp bn cd
+cc ij ii iw jo lm ll lj fv fu fs gq gn ck ci j i g jk jj es eo io js
+jq jp co cn kg jm hh hg ke kd kb gp go de fb fm fy fx kq ko ma lz ly u
+s t fn fj ff fe em el ip di dg fc fa df dd lg ax av au hl hk hi ks kr
+kl ed eb ea ku kt gg ge gf o n b it is by bx eu et hc gj bv bu bo jn
+iu ls lq lf)
 
 
-
+;; (car (pre))
 
 
 
