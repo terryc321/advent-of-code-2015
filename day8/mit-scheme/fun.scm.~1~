@@ -1,0 +1,161 @@
+#|
+
+canonical we just not make a direct translation of code ...
+
+(and16 (sym 338 lf) (sym 337 lq) (sym 336 ls))
+becomes haskell ...
+
+ls :: Word16
+ls = lf .&. lq
+
+
+(+ 1 2 3)
+
+|#
+
+
+
+
+
+(use-modules (ice-9 format)) ;; format common lisp 
+(use-modules (ice-9 pretty-print)) ;; pretty-print
+(define pp pretty-print)
+;;(use-modules (rnrs)) ;; assert 
+(use-modules (srfi srfi-1)) ;; first second third ...
+(use-modules (srfi srfi-2)) ;; first second third ...
+
+
+;; (use-modules (rnrs)) ;; assert
+
+;; regular expression
+(use-modules (ice-9 regex)) 
+
+;; pattern matcher ?
+(use-modules (ice-9 match))
+
+
+
+;; --------------------- macros --------------------------
+(define-macro (dolist varls . body)
+  (let* ((fn (gensym "fn"))
+	 (xs (gensym "xs"))
+	 (var (car varls))
+	 (ls  (car (cdr varls))))
+    `(letrec ((,fn (lambda (,xs)
+		     (cond
+		      ((null? ,xs) #f)
+		      (#t (let ((,var (car ,xs)))
+			    ,@body
+			    (,fn (cdr ,xs))))))))
+       (,fn ,ls))))
+
+;; --------------------- while ----------------------------
+
+(defmacro while (condition . body)
+  (let ((lup (gensym "loop")))
+    `(letrec ((,lup (lambda ()
+		      (when ,condition
+			,@body
+			(,lup)))))
+       (,lup))))
+
+;; (let ((i 0))
+;;   (while (< i 10)
+;;     (format #t " i = ~a ~%" i )
+;;     (set!  i (+ i 1))))
+
+;; --------------------- macros --------------------------
+
+;; (define *debug* #f)
+;; 
+;; (define input #f)
+;; 
+;; ;; in this puzzle we want to read the input file 
+;; (define (get-input filename)
+;;   (let ((port (open-input-file filename)))
+;;     (set! input (read port))
+;;     (close-input-port port)))
+;; 
+;; ;; for example
+;; ;;(define input #f)
+;; 
+;; (get-input "input")
+;; ;;(get-input "input2")
+;; 
+;; input
+;; -----------------------------------------------------------
+;; (format #t "hello world!~%")
+
+#|
+(getcwd)
+
+|#
+(use-modules (ice-9 binary-ports))
+
+(define (read-bytes333 port)
+  (format #t "reading bytes ... on port ~a ~%" port)
+  (let ((w '()))	
+    (letrec ((foo (lambda ()
+		    (let ((p (get-u8 port)))
+		      (format #t "read byte ~a ~%" p)
+		      (cond
+		       ((eof-object? p) w)
+		       ((= p 10)
+			(format #t "found a newline !~%")
+			w)
+		       (#t (set! w (cons p w))
+			   (foo)))))))
+      (foo)
+      (reverse w))))
+
+		       
+
+;; ;; read u8 - are these ints ? 
+;; (define read-bytes
+;;   (lambda (action)
+;;     (call-with-input-file "input"
+;;       (lambda (port)
+;; 	(letrec ((foo (lambda (s)
+;; 			(let ((ch (get-u8 port)))
+;; 			  (cond
+;; 			   ((eof-object? ch)
+;; 			    (action (reverse s)))
+;; 			   ;; ascii 10 is newline
+;; 			   ((= ch 10)
+;; 			    (action (reverse s))
+;; 			    (foo '()))			   
+;; 			   (#t (foo (cons ch s))))))))
+;; 	  (foo '()))))))
+
+
+;; when we get a complete line - without newline - process it
+;; we call read-bytes with a function which is called when a whole line is got
+;; then after read-bytes returns , we have all the lines
+
+
+(define (reaction)
+  (call-with-input-file "input"
+    (lambda (port)
+      (let ((known '()))
+	(letrec ((foo (lambda ()
+			(let ((w (read-bytes333 port)))
+			  (cond
+			   ((null? w) known)
+			   (#t (set! known (cons w known))
+			       (foo)))))))
+	  (set! known (reverse known))
+	  known)))))
+
+
+
+
+
+
+;; ;;(read-bytes)
+;; (reaction)
+;; 
+;; (first (reaction))
+
+
+
+

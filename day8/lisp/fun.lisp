@@ -1,0 +1,6 @@
+
+
+
+(defpackage :foo
+ (:use :cl))
+

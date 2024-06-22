@@ -1,0 +1,117 @@
+#|
+
+|#
+
+
+(define (read-bytes333 port)
+  (format #t "reading bytes ... on port ~a ~%" port)
+  (let ((w '()))	
+    (letrec ((foo (lambda ()
+		    (let ((p (get-u8 port)))
+		      (format #t "read byte ~a ~%" p)
+		      (cond
+		       ((eof-object? p) w)
+		       ((= p 10)
+			(format #t "found a newline !~%")
+			w)
+		       (#t (set! w (cons p w))
+			   (foo)))))))
+      (foo)
+      (reverse w))))
+
+		       
+
+;; ;; read u8 - are these ints ? 
+;; (define read-bytes
+;;   (lambda (action)
+;;     (call-with-input-file "input"
+;;       (lambda (port)
+;; 	(letrec ((foo (lambda (s)
+;; 			(let ((ch (get-u8 port)))
+;; 			  (cond
+;; 			   ((eof-object? ch)
+;; 			    (action (reverse s)))
+;; 			   ;; ascii 10 is newline
+;; 			   ((= ch 10)
+;; 			    (action (reverse s))
+;; 			    (foo '()))			   
+;; 			   (#t (foo (cons ch s))))))))
+;; 	  (foo '()))))))
+
+
+;; when we get a complete line - without newline - process it
+;; we call read-bytes with a function which is called when a whole line is got
+;; then after read-bytes returns , we have all the lines
+
+
+(define (reaction)
+  (call-with-input-file "input"
+    (lambda (port)
+      (let ((known '()))
+	(letrec ((foo (lambda ()
+			(let ((w (read-bytes333 port)))
+			  (cond
+			   ((null? w) known)
+			   (#t (set! known (cons w known))
+			       (foo)))))))
+	  (set! known (reverse known))
+	  known)))))
+
+(+ 1 2)
+
+
+
+;; ;;(read-bytes)
+
+ (reaction)
+;; 
+;; (first (reaction))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
