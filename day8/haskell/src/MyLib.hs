@@ -1,6 +1,6 @@
 
 
-module MyLib (someFunc) where
+module MyLib (someFunc ) where
 
 -- redundant IO already in 
 import System.IO

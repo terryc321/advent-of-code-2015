@@ -16,7 +16,9 @@ int main(int argc , char *args[] ){
 
   int tot_c = 0;
   int tot_m = 0;
-   
+  int loc_c = 0;
+  int loc_m = 0;
+  
   while(!feof(fp)){
     int ch = fgetc(fp);
 

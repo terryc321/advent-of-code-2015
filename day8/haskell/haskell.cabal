@@ -60,7 +60,8 @@ library
     -- Modules exported by the library.
     exposed-modules:  MyLib ,
                       MyLib2 ,
-                      MyLib3
+                      MyLib3 ,
+                      MyLib4
 
     -- Modules included in this library but not exported.
     -- other-modules:
@@ -96,7 +97,8 @@ executable haskell
     -- Other library packages from which modules are imported.
     build-depends:
         base ^>=4.17.2.1,
-        haskell
+        haskell ,
+        haskell-say ^>=1.0.0.0
         
     -- Directories containing source files.
     hs-source-dirs:   app
@@ -135,7 +137,10 @@ test-suite haskell-test
     build-depends:
         base ^>=4.17.2.1,
         haskell ,
-        HUnit
+        HUnit ,
+        raw-strings-qq 
+        
+        
 
 
         

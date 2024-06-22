@@ -5,7 +5,7 @@
 --    containing import statements
 --    followed by definitions
 
-module MyLib3 (someFunc , bc , cc ) where
+module MyLib3 (someFunc  ) where
 
 -- https://kseo.github.io/posts/2014-02-06-multi-line-strings-in-haskell.html
 import Text.RawString.QQ
@@ -315,13 +315,21 @@ multi = [r|"sjdivfriyaaqa\xd2v\"k\"mpcu\"yyu\"en"
 "lltj\"kbbxi"|]
 
 --  chars in string
-cc :: String -> Int -> Int
+-- drop outside " two quotes first as they do not contribute to string "
+cc2 :: String -> Int -> Int
+cc2 [] n = n
+cc2 [_ , '"'] n = n + 1 
+cc2 ('\n' : t) n = cc2 t n 
+cc2 ('\\' : '"' : t) n = cc2 t (n + 1)
+cc2 ('\\' : '\\' : t) n = cc2 t (n + 1)
+cc2 ('\\' : 'x' : _ : _ : t) n = cc2 t (n + 1)
+cc2 (h : t) n = cc2 t (n + 1)
+
 cc [] n = n
-cc ('\n' : t) n = cc t n 
-cc ('\\' : '"' : t) n = cc t (n + 1)
-cc ('\\' : '\\' : t) n = cc t (n + 1)
-cc ('\\' : 'x' : _ : _ : t) n = cc t (n + 1)
-cc (h : t) n = cc t (n + 1)
+cc ('"' : t) n = cc2 t n
+cc ( h : t) n = cc2 t n
+
+charCount s = cc s 0
 
 -- bytes in string
 bc :: String -> Int -> Int
@@ -332,12 +340,22 @@ bc ('\\' : '\\' : t) n = bc t (n + 2)
 bc ('\\' : 'x' : _ : _ : t) n = bc t (n + 4)
 bc (h : t) n = bc t (n + 1)
 
+byteCount s = bc s 0
+
+
+-- --- ambiguous getLine
+-- getL :: String -> String
+-- getL [] = []
+-- getL (x : t) = if x == '\n' then []
+--                else x : (getL t)
+
+
   
 someFunc :: IO ()
 someFunc = do putStrLn ("This is from MyLib3 ..")
               putStrLn (" multi is " ++ show (length multi) ++ " bytes long")
-              let c = cc multi 0
-                  b = bc multi 0
+              let c = charCount multi
+                  b = byteCount multi 
                   diff = b - c 
                   in  do putStrLn (" string has char count = " ++ show c ++ "  and byte count  = " ++ show b ++ " ")
                          putStrLn (" difference of " ++ show diff )
