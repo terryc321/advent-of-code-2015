@@ -2,8 +2,12 @@
 
 #include <stdio.h>
 
-int main(){
-  char filename[] = "../input";
+
+int main(int argc , char *args[] ){
+  char *filename = args[1];
+  printf("reading file [%s] \n" , filename);
+  printf("got [character] : TOT_C : TOT_M : expect mem > char count \n");
+  
   FILE *fp = fopen(filename,"r");
   if (!fp){
     fprintf(stderr,"cannot open [%s] ", filename);
