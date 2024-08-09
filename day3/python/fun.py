@@ -1,6 +1,7 @@
 
 
 
+
 f = open("../input", "r")
 contents = f.readlines()
 # print(contents)
