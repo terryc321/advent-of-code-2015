@@ -1,12 +1,24 @@
+#|
 
-(define-syntax pr
-  (syntax-rules () 
-    ((pr x y) (format #t x y))))
+optimize if mana spent > 1387 then curtail as too far
 
-(use-modules (srfi srfi-9))
+
+|#
+
+(define *best-guess* 953)
+
+
+;; no srfi-9
+(import chicken.format)
+
+
+;; (define-syntax pr
+;;   (syntax-rules () 
+;;     ((pr x y) (format #t x y))))
+;;(use-modules (srfi srfi-9))
 
 ;; shield poison recharge cannot be cast if already in play
-(define-record-type <state>
+(define-record-type state
   (make-state hits mana armour shield poison recharge boss-hits boss-damage mana-spent)
   state?
   (hits    hits   hits!)  
@@ -76,6 +88,7 @@
 ;; after any effects have taken effect 
 (define (play1-move s)
   (cond
+   ((>= (mana-spent s) *best-guess*) #f)
    ((< (mana s) 53) ;;(format #t "player dies - cannot cast any spell !~%")
     'player-dies)
    (#t
@@ -294,4 +307,14 @@
 ;;
 ;;
 
+;; if we stop if get more than or equal to 1387 then we find other solutions
+;; lowest-mana found 1288
+;; lowest-mana found 1235
+;; lowest-mana found 1182
+;; lowest-mana found 953
+
+;; how do we conditionally compile this ?
+;;(run)
+
+;; 953 is proposed as best mana spent to give a solution win
 

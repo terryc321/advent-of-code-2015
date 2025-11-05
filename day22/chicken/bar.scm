@@ -1,12 +1,24 @@
+#|
 
-(define-syntax pr
-  (syntax-rules () 
-    ((pr x y) (format #t x y))))
+optimize if mana spent > 1387 then curtail as too far
 
-(use-modules (srfi srfi-9))
+
+|#
+
+(define *best-guess* 953)
+
+
+;; no srfi-9
+(import chicken.format)
+
+
+;; (define-syntax pr
+;;   (syntax-rules () 
+;;     ((pr x y) (format #t x y))))
+;;(use-modules (srfi srfi-9))
 
 ;; shield poison recharge cannot be cast if already in play
-(define-record-type <state>
+(define-record-type state
   (make-state hits mana armour shield poison recharge boss-hits boss-damage mana-spent)
   state?
   (hits    hits   hits!)  
@@ -76,6 +88,7 @@
 ;; after any effects have taken effect 
 (define (play1-move s)
   (cond
+   ((>= (mana-spent s) *best-guess*) #f)
    ((< (mana s) 53) ;;(format #t "player dies - cannot cast any spell !~%")
     'player-dies)
    (#t
@@ -102,28 +115,40 @@
 
 ;; apply any effects 
 (define (play1 s)
-  (let ((s2 (apply-effects s)))
+  (let ((s3 (copy-state s)))
+    ;; lose 1 hit point
+    (hits! s3 (+ (hits s3) -1))
     (cond
-     ((player-dead? s2)   ;;   (format #t "player dies !~%")
-      'player-died)
-     ((boss-dead? s2)
-      (record-lowest-mana (mana-spent s2))
-      ;;(format #t "boss dies ! mana-spent is ~a~%" (mana-spent s2))
-      )
-     (#t (play1-move s2)))))
+     ((player-dead? s3) 'player-died)
+     (#t
+      (let ((s2 (apply-effects s3)))
+	(cond
+	 ((player-dead? s2)   ;;   (format #t "player dies !~%")
+	  'player-died)
+	 ((boss-dead? s2)
+	  (record-lowest-mana (mana-spent s2))
+	  ;;(format #t "boss dies ! mana-spent is ~a~%" (mana-spent s2))
+	  )
+	 (#t (play1-move s2))))))))
 
 
 (define (play2 s)
-  (let ((s2 (apply-effects s)))
+  (let ((s3 (copy-state s)))
+    ;; lose 1 hit point
+    (hits! s3 (+ (hits s3) -1))
     (cond
-     ((player-dead? s2)
-      (format #t "player dies !~%")
-      'player-died)
-     ((boss-dead? s2)
-      (record-lowest-mana (mana-spent s2))
-      ;;(format #t "boss dies ! mana spent is ~a~%" (mana-spent s2))
-      )
-     (#t (play2-move s2)))))
+     ((player-dead? s3) 'player-died)
+     (#t
+      (let ((s2 (apply-effects s3)))
+	(cond
+	 ((player-dead? s2)
+	  (format #t "player dies !~%")
+	  'player-died)
+	 ((boss-dead? s2)
+	  (record-lowest-mana (mana-spent s2))
+	  ;;(format #t "boss dies ! mana spent is ~a~%" (mana-spent s2))
+	  )
+	 (#t (play2-move s2))))))))
 
 
 (define (play2-move s)
@@ -294,4 +319,14 @@
 ;;
 ;;
 
+;; if we stop if get more than or equal to 1387 then we find other solutions
+;; lowest-mana found 1288
+;; lowest-mana found 1235
+;; lowest-mana found 1182
+;; lowest-mana found 953
+
+;; how do we conditionally compile this ?
+(run)
+
+;; 953 is proposed as best mana spent to give a solution win
 
