@@ -415,26 +415,11 @@ P = poison spell
 
 solution = [ R S D P ] 
 
-Recharge 
-Shield 
-Drain 
-Poison
-then boss dies 
+actions  = [ R * BOSS * S * BOSS * D * BOSS * P * BOSS ]
+where * means effects of spells take place
+ BOSS means boss attacks causing 8 damage depending on armour 
+
+
 
 |#
 
-
-
-#|
-#;8542> (run)
-#(29 11 2 0 0 0 -1 1481 (boss is dead deduct cast-drain deduct deduct cast-drain shield-effect deduct shield-effect deduct cast-drain shield-effect deduct shield-effect recharge-effect deduct cast-poison shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-shield recharge-effect deduct recharge-effect deduct cast-recharge deduct deduct cast-poison deduct recharge-effect deduct cast-drain shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-magic-missile shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-recharge shield-effect deduct shield-effect deduct cast-shield deduct deduct cast-magic-missile deduct deduct cast-magic-missile deduct))
-#(69 5 2 0 0 1 -2 1441 (boss is dead deduct cast-drain deduct deduct cast-drain deduct deduct cast-poison shield-effect deduct shield-effect deduct cast-magic-missile shield-effect deduct shield-effect recharge-effect deduct cast-magic-missile shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-shield recharge-effect deduct recharge-effect deduct cast-recharge deduct recharge-effect deduct cast-poison shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-magic-missile shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-recharge shield-effect deduct shield-effect deduct cast-shield deduct deduct cast-magic-missile deduct deduct cast-magic-missile deduct))
-#(162 13 1 0 0 1 -2 1348 (boss is dead deduct cast-magic-missile deduct deduct cast-magic-missile shield-effect deduct shield-effect deduct cast-poison shield-effect deduct shield-effect recharge-effect deduct cast-magic-missile shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-shield recharge-effect deduct recharge-effect deduct cast-recharge deduct recharge-effect deduct cast-poison shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-magic-missile shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-recharge shield-effect deduct shield-effect deduct cast-shield deduct deduct cast-magic-missile deduct deduct cast-magic-missile deduct))
-#(114 21 4 0 0 0 -1 1295 (boss is dead deduct cast-magic-missile deduct deduct cast-magic-missile shield-effect deduct shield-effect deduct cast-magic-missile shield-effect deduct shield-effect recharge-effect deduct cast-poison shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-shield recharge-effect deduct recharge-effect deduct cast-recharge shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-poison shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-recharge shield-effect deduct shield-effect deduct cast-shield deduct deduct cast-magic-missile deduct deduct cast-magic-missile deduct))
-#(52 3 3 0 0 0 -1 953 (boss is dead deduct cast-magic-missile deduct deduct cast-magic-missile deduct deduct cast-magic-missile shield-effect deduct shield-effect deduct cast-poison shield-effect deduct shield-effect recharge-effect deduct cast-magic-missile shield-effect recharge-effect deduct shield-effect recharge-effect deduct cast-shield recharge-effect deduct recharge-effect deduct cast-recharge deduct deduct cast-poison deduct deduct cast-magic-missile deduct))
-died
-#;8778> *max-mana-spent*
-953
-
-wrong answer apparently...
-|#
