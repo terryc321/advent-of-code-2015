@@ -136,9 +136,11 @@ magic-missile
 
 (define *max-mana-spent* 2000)
 (define *lowest-outcome* #f)
+(define *deduct* #f)
 
 (define reset!
   (lambda ()
+    (set! *deduct* #t)
     (set! *max-mana-spent* #f)
     (set! *lowest-outcome* #f)
     ))
@@ -156,18 +158,31 @@ magic-missile
       (let ((s3 (state-moves! s2 (cons `(deduct ,(state-without-moves s2)) (state-moves s2)))))
 	(f s3))))))
 
+
 (define (state-without-moves s)
-  (list 'mana=> (state-mana s)
-	'armour=> (state-armour s)
-	'hits=> (state-hits s)
-	'recharge=> (state-recharge s)
-	'shield=> (state-shield s)
-	'poison=> (state-poison s)
-	'boss-hits=> (state-boss-hits s)
-	'mana-spent=> (state-mana-spent s)))
+  (string-append ;; Player has 2 hit points, 7 armor, 340 mana
+   (format #f "player has ~a hit points, ~a armour , ~a mana  "(state-hits s)(state-armour s)(state-mana s))
+   ;; (format #f "spells r:~a s:~a p:~a "(state-recharge s) (state-shield s) (state-poison s))
+   (format #f "boss has ~a hit points ~%"(state-boss-hits s))))
+
+(define (explain-fn e)
+  (cond
+   ((pair? e) (format #t "~a~%" (car (cdr e))))
+   (#t (format #t "~a~%" e))))
+
+
+(define (explain outcome)
+  (let ((r #f))
+    (map explain-fn (reverse (state-moves outcome)))
+    r))
+
+
+
 
 (define (play1 s)
-  (deduct-player s play1b))
+  (if *deduct*
+      (deduct-player s play1b)
+      (play1b s)))
 
 ;; effects
 (define (play1b s)
@@ -181,7 +196,7 @@ magic-missile
    ((> (state-recharge s) 0) ;; recharge gives 101 mana
     (let* ((s2 (state-recharge! s (- (state-recharge s) 1)))
 	   (s3 (state-mana! s2 (+ 101 (state-mana s2))))
-	   (s4 (state-moves! s3 (cons 'recharge-effect (state-moves s3))))
+	   (s4 (state-moves! s3 (cons `(recharge-effect ,(state-without-moves s3)) (state-moves s3))))
 	   )
       (apply-shield-effect s4 f)))
    (#t 
@@ -192,7 +207,7 @@ magic-missile
    ((> (state-shield s) 0) ;; shield gives 7 armour
     (let* ((s2 (state-shield! s (- (state-shield s) 1)))
 	   (s3 (state-armour! s2 (+ 7 (state-armour s2))))
-	   (s4 (state-moves! s3 (cons 'shield-effect (state-moves s3))))
+	   (s4 (state-moves! s3 (cons `(shield-effect ,(state-without-moves s3)) (state-moves s3))))
 	   )
       (apply-poison-effect s4 f)))
    (#t 
@@ -203,7 +218,7 @@ magic-missile
    ((> (state-poison s) 0) ;; poison take 3 boss
     (let* ((s2 (state-poison! s (- (state-poison s) 1)))
 	   (s3 (state-boss-hits! s2 (+ -3 (state-boss-hits s2))))
-	   (s4 (state-moves! s3 (cons 'poison-effect (state-moves s3))))
+	   (s4 (state-moves! s3 (cons `(poison-effect ,(state-without-moves s3)) (state-moves s3))))
 	   )
       (f s4)))
    (#t 
@@ -227,42 +242,47 @@ magic-missile
 
 ;;Magic Missile costs 53 mana. It instantly does 4 damage.
 (define (cast-magic-missile s)
-  (when (>= (state-mana s) 53)
-    (let* ((s2 (state-mana! s (- (state-mana s) 53)))
-	   (s3 (state-mana-spent! s2 (+ 53 (state-mana-spent s2))))
-	   (s4 (state-boss-hits! s3 (+ -4 (state-boss-hits s3))))
-	   (s5 (state-moves! s4 (cons 'cast-magic-missile (state-moves s4)))))
-      (play2 s5))))
+  (let ((cost 53))
+    (when (>= (state-mana s) cost)
+      (let* ((s2 (state-mana! s (- (state-mana s) cost)))
+	     (s3 (state-mana-spent! s2 (+ cost (state-mana-spent s2))))
+	     (s4 (state-boss-hits! s3 (+ -4 (state-boss-hits s3))))
+	     (s5 (state-moves! s4 (cons `(cast-magic-missile ,(state-without-moves s4)) (state-moves s4)))))
+	(play2 s5)))))
+
 
 
 ;;Drain costs 73 mana. It instantly does 2 damage and heals you for 2 hit points.
 (define (cast-drain s)
-  (when (>= (state-mana s) 73)
-    (let* ((s2 (state-mana! s (- (state-mana s) 73)))
-	   (s3 (state-mana-spent! s2 (+ 73 (state-mana-spent s2))))
-	   (s4 (state-boss-hits! s3 (+ -2 (state-boss-hits s3))))
-	   (s5 (state-hits! s4 (+ 2 (state-hits s4))))
-	   (s6 (state-moves! s5 (cons 'cast-drain (state-moves s5)))))
-      (play2 s6))))
+  (let ((cost 73))
+    (when (>= (state-mana s) cost)
+      (let* ((s2 (state-mana! s (- (state-mana s) cost)))
+	     (s3 (state-mana-spent! s2 (+ cost (state-mana-spent s2))))
+	     (s4 (state-boss-hits! s3 (+ -2 (state-boss-hits s3))))
+	     (s5 (state-hits! s4 (+ 2 (state-hits s4))))
+	     (s6 (state-moves! s5 (cons `(cast-drain ,(state-without-moves s5)) (state-moves s5)))))
+	(play2 s6)))))
 
 
 ;;Shield costs 113 mana. It starts an effect that lasts for 6 turns. While it is active, your armor is increased by 7.
 (define (cast-shield s)
-  (when (>= (state-mana s) 113)
-    (let* ((s2 (state-mana! s (- (state-mana s) 113)))
-	   (s3 (state-mana-spent! s2 (+ 113 (state-mana-spent s2))))
-	   (s4 (state-shield! s3 6))
-	   (s5 (state-moves! s4 (cons 'cast-shield (state-moves s4)))))
-      (play2 s5))))
+  (let ((cost 113))
+    (when (>= (state-mana s) cost)
+      (let* ((s2 (state-mana! s (- (state-mana s) cost)))
+	     (s3 (state-mana-spent! s2 (+ cost (state-mana-spent s2))))
+	     (s4 (state-shield! s3 6))
+	     (s5 (state-moves! s4 (cons `(cast-shield ,(state-without-moves s4)) (state-moves s4)))))
+	(play2 s5)))))
 
 ;;Poison costs 173 mana. It starts an effect that lasts for 6 turns. At the start of each turn while it is active, it deals the boss 3 damage.
 (define (cast-poison s)
-  (when (>= (state-mana s) 173)
-    (let* ((s2 (state-mana! s (- (state-mana s) 173)))
-	   (s3 (state-mana-spent! s2 (+ 173 (state-mana-spent s2))))
-	   (s4 (state-poison! s3 6))
-	   (s5 (state-moves! s4 (cons 'cast-poison (state-moves s4)))))
-      (play2 s5))))
+  (let ((cost 173))
+    (when (>= (state-mana s) cost)
+      (let* ((s2 (state-mana! s (- (state-mana s) cost)))
+	     (s3 (state-mana-spent! s2 (+ cost (state-mana-spent s2))))
+	     (s4 (state-poison! s3 6))
+	     (s5 (state-moves! s4 (cons `(cast-poison ,(state-without-moves s4)) (state-moves s4)))))
+	(play2 s5)))))
 
 
 ;;Recharge costs 229 mana. It starts an effect that lasts for 5 turns. At the start of each turn while it is active, it gives you 101 new mana.
@@ -272,12 +292,16 @@ magic-missile
       (let* ((s2 (state-mana! s (- (state-mana s) cost)))
 	     (s3 (state-mana-spent! s2 (+ cost (state-mana-spent s2))))
 	     (s4 (state-recharge! s3 5))
-	     (s5 (state-moves! s4 (cons 'cast-recharge (state-moves s4)))))
+	     (s5 (state-moves! s4 (cons `(cast-recharge ,(state-without-moves s4)) (state-moves s4)))))
 	(play2 s5)))))
 
 
 (define (play2 s)
-  (deduct-player s play2b))
+    (if *deduct*
+	(deduct-player s play2b)
+	(play2b s)))
+
+
 
 ;; effects
 (define (play2b s)
@@ -288,7 +312,7 @@ magic-missile
 
 (define (play2c s)
   (cond
-   ((<= (state-boss-hits s) 0)
+   ((<= (state-boss-hits s) 0) ;; boss is dead
     (let ((s2 (state-moves! s (cons "boss is dead" (state-moves s)))))
       (cond
        ((not *max-mana-spent*) ;; max-mana-spent not defined yet
@@ -300,25 +324,28 @@ magic-missile
 	(format #t "found mana-spent => ~a : see *lowest-outcome*~%" *max-mana-spent*)
 	(set! *lowest-outcome* s2)))))
    (#t
-    (let ((boss-attack 8))
-      (cond
-       ((>= (state-armour s) boss-attack)
-	(let ((ar2 (- (state-armour s) boss-attack))
-	      (dam 1))
-	  ;; armour and body took damage
-	  (let* ((s2 (state-hits! s (- (state-hits s) dam)))
-		 (s3 (state-armour! s2 ar2)))
-	    (play1 s3))))
-       (#t ;;(< ar boss-attack)
-	(let ((ar2 0)
-	      (dam (max 1 (- boss-attack (state-armour s)))))
-	  (let* ((s2 (state-hits! s (- (state-hits s) dam)))
-		 (s3 (state-armour! s2 ar2)))
-	    (play1 s3)))))))))
+    (let ((s2 (state-moves! s (cons `(boss-move ,(state-without-moves s)) (state-moves s)))))
+      (let ((boss-attack 8))
+	(cond
+	 ((>= (state-armour s2) boss-attack)
+	  (let ((ar2 (- (state-armour s2) boss-attack))
+		(dam 1))
+	    ;; armour and body took damage
+	    (let* ((s3 (state-hits! s2 (- (state-hits s2) dam)))
+		   (s4 (state-armour! s3 ar2)))
+	      (play1 s4))))
+	 (#t ;;(< ar boss-attack)
+	  (let ((ar2 0)
+		(dam (max 1 (- boss-attack (state-armour s2)))))
+	    (let* ((s3 (state-hits! s2 (- (state-hits s2) dam)))
+		   (s4 (state-armour! s3 ar2)))
+	      (play1 s4))))))))))
+
 
 
 (define (run)
   (reset!)
+  (set! *deduct* #t)
   (let ((mana 500)
 	(hits 50)
 	(armour 0)
@@ -329,12 +356,14 @@ magic-missile
 	(mana-spent 0)
 	(moves '()))
     (let ((s (make-state mana armour hits recharge shield poison boss-hits mana-spent moves)))
-      (play1 s))))
+      (let ((s2 (state-moves! s (list `(start ,(state-without-moves s))))))
+	(play1 s2)))))
 
 
 
 (define (example1)
   (reset!)
+  (set! *deduct* #f) ;; no deduct 1 point each move
   (let ((mana 250)
 	(hits 10)
 	(armour 0)
@@ -345,11 +374,13 @@ magic-missile
 	(mana-spent 0)
 	(moves '()))
     (let ((s (make-state mana armour hits recharge shield poison boss-hits mana-spent moves)))
-      (play1 s))))
+      (let ((s2 (state-moves! s (list `(start ,(state-without-moves s))))))
+	(play1 s2)))))
 
 
 (define (example2)
   (reset!)
+  (set! *deduct* #f) ;; no deduct 1 point each move
   (let ((mana 250)
 	(hits 10)
 	(armour 0)
@@ -360,7 +391,9 @@ magic-missile
 	(mana-spent 0)
 	(moves '()))
     (let ((s (make-state mana armour hits recharge shield poison boss-hits mana-spent moves)))
-      (play1 s))))
+      (let ((s2 (state-moves! s (list `(start ,(state-without-moves s))))))
+	(play1 s2)))))
+
 
 
 
