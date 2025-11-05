@@ -5,11 +5,12 @@ optimize if mana spent > 1387 then curtail as too far
 
 |#
 
-(define *best-guess* 953)
+(define *best-guess* 1348)
 
 
 ;; no srfi-9
-(import chicken.format)
+(import (chicken format))
+(import (chicken process-context))
 
 
 ;; (define-syntax pr
@@ -88,7 +89,7 @@ optimize if mana spent > 1387 then curtail as too far
 ;; after any effects have taken effect 
 (define (play1-move s)
   (cond
-   ((>= (mana-spent s) *best-guess*) #f)
+   ((> (mana-spent s) *best-guess*) #f)
    ((< (mana s) 53) ;;(format #t "player dies - cannot cast any spell !~%")
     'player-dies)
    (#t
@@ -262,6 +263,21 @@ optimize if mana spent > 1387 then curtail as too far
     (play1 state)))
 
 
+(define (example2)
+  (let* ((mana 250)
+	 (hits 10)
+	 (armour 0)
+	 (c-shield 0)
+	 (c-poison 0)
+	 (c-recharge 0)
+	 (boss-hits 14)
+	 (boss-damage 8)
+	 (mana-spent 0)
+	 (state  (make-state hits mana armour c-shield c-poison c-recharge boss-hits boss-damage mana-spent)))
+    (reset!)
+    (play1 state)))
+
+
 
 
 ;; 
@@ -326,7 +342,8 @@ optimize if mana spent > 1387 then curtail as too far
 ;; lowest-mana found 953
 
 ;; how do we conditionally compile this ?
-(run)
+;; #+execute
+;;(run)
 
 ;; 953 is proposed as best mana spent to give a solution win
 
