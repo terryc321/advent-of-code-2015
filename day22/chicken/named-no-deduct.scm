@@ -255,7 +255,7 @@ magic-missile
 ;;Drain costs 73 mana. It instantly does 2 damage and heals you for 2 hit points.
 (define (cast-drain s)
   (let ((cost 73))
-    (when (>= (state-mana s) cost)
+    (when (= (state-mana s) cost)
       (let* ((s2 (state-mana! s (- (state-mana s) cost)))
 	     (s3 (state-mana-spent! s2 (+ cost (state-mana-spent s2))))
 	     (s4 (state-boss-hits! s3 (+ -2 (state-boss-hits s3))))
@@ -267,7 +267,7 @@ magic-missile
 ;;Shield costs 113 mana. It starts an effect that lasts for 6 turns. While it is active, your armor is increased by 7.
 (define (cast-shield s)
   (let ((cost 113))
-    (when (>= (state-mana s) cost)
+    (when (and (>= (state-mana s) cost) (< (state-shield s) 1))
       (let* ((s2 (state-mana! s (- (state-mana s) cost)))
 	     (s3 (state-mana-spent! s2 (+ cost (state-mana-spent s2))))
 	     (s4 (state-shield! s3 6))
@@ -277,7 +277,7 @@ magic-missile
 ;;Poison costs 173 mana. It starts an effect that lasts for 6 turns. At the start of each turn while it is active, it deals the boss 3 damage.
 (define (cast-poison s)
   (let ((cost 173))
-    (when (>= (state-mana s) cost)
+    (when (and (>= (state-mana s) cost) (< (state-poison s) 1))
       (let* ((s2 (state-mana! s (- (state-mana s) cost)))
 	     (s3 (state-mana-spent! s2 (+ cost (state-mana-spent s2))))
 	     (s4 (state-poison! s3 6))
@@ -288,7 +288,7 @@ magic-missile
 ;;Recharge costs 229 mana. It starts an effect that lasts for 5 turns. At the start of each turn while it is active, it gives you 101 new mana.
 (define (cast-recharge s)
   (let ((cost 229))
-    (when (>= (state-mana s) cost)
+    (when (and (>= (state-mana s) cost) (< (state-recharge s) 1))
       (let* ((s2 (state-mana! s (- (state-mana s) cost)))
 	     (s3 (state-mana-spent! s2 (+ cost (state-mana-spent s2))))
 	     (s4 (state-recharge! s3 5))
@@ -300,6 +300,7 @@ magic-missile
     (if *deduct*
 	(deduct-player s play2b)
 	(play2b s)))
+
 
 
 
