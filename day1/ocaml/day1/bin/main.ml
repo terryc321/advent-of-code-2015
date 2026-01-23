@@ -1,6 +1,29 @@
 (* get current working directory in ocaml *)
 let cwd = Sys.getcwd();;
 
+
+(*
+  # a one liner - ensures in correct opam environment
+  opam exec -- dune init proj project_name
+  
+  # we can create a day1 project for dune using 
+  eval $(opam env)
+  dune init proj day1 
+  
+ *)
+
+(* we can load Unix module at runtime into ocaml repl using
+       #load "unix.cma";;
+ *)
+
+(* chatgippity says dune project root is set on using dune build && dune exec day1
+   throws exception ... 
+   Exception: Not_found.
+
+ *)
+(* let root = Unix.getenv "DUNE_PROJECT_ROOT"  *)
+let root = "not implemented yet"
+
 (* get first character of a string  
    String.get "asdf" 0;;
    not entirely accurate at all depending on the string encoding may not even be decodable
@@ -97,7 +120,12 @@ let part2 = santa2
 
 
 (* toplevel anonymous definitions use unit ()  *)
-let () = let lines = read_file "../../../input"
+let () = print_string "current directory : " ;
+         print_endline cwd ; 
+         print_string "dune root : (" ;
+         print_string root ;
+         print_endline ")" ;         
+         let lines = read_file "../../input"
          in let line = List.hd lines
             in print_string "the line has " ;
                print_int (String.length line) ;

@@ -1,4 +1,6 @@
 (executable
  (public_name day1)
  (name main)
- (libraries day1))
+;; 
+;; we use Unix.getenv this requires unix.cma to be loaded - so include unix in the libraries
+(libraries day1 unix))
