@@ -20,8 +20,9 @@ name:               haskell
 -- PVP summary:     +-+------- breaking API changes
 --                  | | +----- non-breaking API additions
 --                  | | | +--- code changes with no API change
-version:            0.1.0.0
-
+-- version:            0.1.0.0
+version:               9.12.2
+                       
 -- A short (one-line) description of the package.
 -- synopsis:
 
@@ -70,7 +71,7 @@ library
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.17.2.1 ,
+    build-depends:    base ,
                       raw-strings-qq 
         
     -- Directories containing source files.
@@ -96,7 +97,7 @@ executable app
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.17.2.1,
+        base,
         haskell ,
         haskell-say ^>=1.0.0.0 ,
         raw-strings-qq  
@@ -125,7 +126,7 @@ executable app2
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.17.2.1,
+        base ,
         haskell ,
         haskell-say ^>=1.0.0.0 ,
         raw-strings-qq  
@@ -154,7 +155,7 @@ executable app-test
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.17.2.1,
+        base ,
         haskell ,
         haskell-say ^>=1.0.0.0 ,
         raw-strings-qq  ,
@@ -185,7 +186,7 @@ executable app2-test
 
     -- Other library packages from which modules are imported.
     build-depends:
-        base ^>=4.17.2.1,
+        base ,
         haskell ,
         haskell-say ^>=1.0.0.0 ,
         raw-strings-qq  ,
@@ -230,7 +231,7 @@ executable app2-test
 --     -- Test dependencies.
 --     -- using HUnit testing framework
 --     build-depends:
---         base ^>=4.17.2.1,
+--         base ,
 --         haskell ,
 --         HUnit ,
 --         raw-strings-qq 

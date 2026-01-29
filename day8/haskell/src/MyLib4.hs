@@ -31,7 +31,9 @@ module MyLib4  where
 
 someFunc :: IO ()
 someFunc = do putStrLn ("From MyLib4 ... " ++ " ... " ++ " ... "  )
-              print splitExample
+              print "hi from MyLib4"
+
+              
 
               
 

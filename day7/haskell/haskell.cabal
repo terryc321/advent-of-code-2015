@@ -20,7 +20,9 @@ name:               haskell
 -- PVP summary:     +-+------- breaking API changes
 --                  | | +----- non-breaking API additions
 --                  | | | +--- code changes with no API change
-version:            0.1.0.0
+-- version:            0.1.0.0
+-- change this value to latest ghc on your system   
+version:            9.12.2
 
 -- A short (one-line) description of the package.
 -- synopsis:
@@ -68,7 +70,8 @@ library
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.17.2.1
+    -- ^>=4.17.2.1
+    build-depends:    base 
 
     -- Directories containing source files.
     hs-source-dirs:   src
@@ -92,8 +95,9 @@ executable haskell
     -- other-extensions:
 
     -- Other library packages from which modules are imported.
+    -- base ^>=4.17.2.1
     build-depends:
-        base ^>=4.17.2.1,
+        base ,  
         haskell
 
     -- Directories containing source files.
@@ -125,6 +129,7 @@ test-suite haskell-test
     main-is:          Main.hs
 
     -- Test dependencies.
+    -- ^>=4.17.2.1
     build-depends:
-        base ^>=4.17.2.1,
+        base ,
         haskell
