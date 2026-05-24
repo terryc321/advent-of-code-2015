@@ -1,0 +1,4 @@
+*.fasl
+*~
+day1/self/Snapshot*
+.*\#

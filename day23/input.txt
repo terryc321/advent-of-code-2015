@@ -44,3 +44,4 @@ inc a
 jmp +2
 hlf a
 jmp -7
+

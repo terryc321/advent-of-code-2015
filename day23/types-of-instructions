@@ -1,0 +1,8 @@
+jio a, +16
+inc a
+tpl a
+jio a, +8
+jie a, +4
+inc b
+
+
