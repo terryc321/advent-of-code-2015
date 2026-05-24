@@ -1,0 +1,7 @@
+:set -package bytestring
+:set -package directory
+
+-- bytestring provides Data.ByteString , Data.ByteString.Char8
+-- directory provides System.Directory
+-- so i can getCurrentDirectory
+

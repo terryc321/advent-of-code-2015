@@ -48,6 +48,7 @@ executables:
     - aoc2015day1
     - base
     - bytestring
+    - directory
 
 tests:
   aoc2015day1-test:

@@ -50,6 +50,7 @@ executable aoc2015day1-exe
       aoc2015day1
     , base
     , bytestring
+    , directory
   default-language: Haskell2010
 
 test-suite aoc2015day1-test
