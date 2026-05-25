@@ -3,13 +3,22 @@ module Main(main) where
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BSC
 
-import qualified System.Directory as SD
+-- import qualified System.Directory as SD
 -- import qualified Data.Char as DC 
 import Data.Char(ord)
 
 
 -- isOpen = \x -> x == ord '(' 
 -- isClose = \x -> x == ord ')'
+
+walk :: BS.ByteString -> Int -> Int -> Int 
+walk bs pos depth = let w = BS.index bs pos 
+     in if w == fromIntegral ( ord '(') then walk bs (pos + 1) (depth + 1)
+        else let d = depth - 1  
+             in if d < 0 then pos 
+                else walk bs (pos + 1) d 
+                  
+
 
 main :: IO ()
 main = do
@@ -24,7 +33,8 @@ main = do
     -- let downs = BS.length (BS.filter (\x -> x == 41) input3)   
     let level = ups - downs
     putStrLn $ "the final level santa is " ++ show (level) ++ " and goodnight"
-
+    let basement = walk input3 0 1 
+    putStrLn $ "santa entered the basement at index " ++ show (basement) ++ " and goodnight"
 
         
 
