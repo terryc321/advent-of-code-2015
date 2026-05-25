@@ -19,7 +19,7 @@ walk bs pos depth = let w = BS.index bs pos
                 else walk bs (pos + 1) d 
                   
 
-
+-- using ByteString , need add bytestring as dependency in package.yaml 
 main :: IO ()
 main = do
     input <- BS.readFile "../input"
