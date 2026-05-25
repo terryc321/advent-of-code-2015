@@ -50,6 +50,7 @@ executables:
     - bytestring
     - directory
 
+
 tests:
   aoc2015day1-test:
     main:                Spec.hs
