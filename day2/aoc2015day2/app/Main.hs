@@ -9,19 +9,29 @@ import Data.List (sort)
 --- Maybe a = Nothing | Just a 
 --- focus on solving - 
 
+
+
 present :: Int -> Int -> Int -> Int 
-foo :: [String] -> Int 
+present x y z =
+    let wrap = 2 * x * y + 2 * x * z + 2 * y * z
+     in let sorted = sort [x, y, z]
+         in let (a : b : _) = sorted
+             in wrap + (a * b)
 
+present2 :: Int -> Int -> Int -> Int 
+present2 x y z =
+  let (a : b : c : _) = sort [x, y, z] in 
+    let wrap = a + a + b + b in 
+      let bow = a * b * c in 
+        wrap + bow
+  
 
-present x y z = let wrap  = 2*x*y + 2*x*z + 2*y*z
-                in let sorted = sort [x,y,z] 
-                   in let (a : b : _) = sorted 
-                      in wrap + (a * b) 
-
+        
 -- import Lib
 -- (a,b,c) 
 -- Either Left or Right ?
 --
+foo :: [String] -> Int 
 foo [a,b,c] = let aa = read a in 
               let bb = read b in 
               let cc = read c in 
@@ -30,10 +40,8 @@ foo [a,b,c] = let aa = read a in
                _ -> -9999999999999999
 
 -- -- given a line such as "20x3x11" split by "x" then recover 3 values as Int 
--- splitLine :: T.Text -> [T.Text] 
+splitLine :: T.Text -> [T.Text]
 splitLine = T.splitOn (T.pack "x")
-
-
 
 solvePart1 input =
   let lines = T.lines input in 
@@ -47,15 +55,30 @@ solvePart1 input =
                   ) lines in
       let sum = foldr (+) 0 res in
         sum 
-              
 
-              
+solvePart2 input =
+  let lines = T.lines input in 
+    let res = map (\line -> 
+         let split = splitLine line in
+           let cnv = map T.unpack split in 
+             let vals = map (\s -> TR.readMaybe s :: Maybe Int ) cnv in
+               case vals of
+                 [Just a , Just b , Just c] -> present2 a b c --- Just (cnv,vals,present a b c)
+                 _ -> 0 --- Nothing
+                  ) lines in
+      -- res holds list of present a b c  -- so far
+      let sum = foldr (+) 0 res in
+        sum 
+                     
 
 main :: IO () 
 main = do 
         input <- TIO.readFile "../input.txt"
         let part1 = solvePart1 input
         putStrLn $ "part 1 solution " ++ show part1 ++ " and goodnight"
+        let part2 = solvePart2 input
+        putStrLn $ "part 2 solution " ++ show part2 ++ " and goodnight"
+        
 
         
 -- part 1 solution 1606483 and goodnight        
