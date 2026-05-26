@@ -21,6 +21,11 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- text
+- bytestring
+- containers
+- puremd5
+- utf8-string
 
 ghc-options:
 - -Wall
@@ -46,6 +51,11 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - aoc2015day4
+    - text
+    - bytestring
+    - containers
+    - puremd5
+    - utf8-string
 
 tests:
   aoc2015day4-test:
