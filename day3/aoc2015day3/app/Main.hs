@@ -85,10 +85,68 @@ solvePart1 input =
             else 0 -- otherwise somethign went wrogn just return nonsense
 
 
-      
+{--
 
-solvePart2 :: T.Text -> Int 
-solvePart2 input = 0
+on final iteration - we must not forget that we ended up somewhere at that last location also
+needs to be added to the number of presents delivered map 
+up ^ case
+down v case
+left < case
+right > case
+move santa two string indexes each time - skipping over robo santas instructions
+similarly robo santa 
+--}
+santa2 :: T.Text -> Int -> Int -> Int -> Int -> Grid -> (Grid,Int,Int) 
+santa2 input n len x y grid =
+  if n >= len then
+    let v = case Map.lookup (Point x y) grid of
+          Just n ->  n + 1 
+          Nothing -> 1
+    in 
+      let gfinal = Map.insert (Point x y) v grid
+      in (gfinal , n , len) 
+  else
+    let v = case Map.lookup (Point x y) grid of
+          Just n ->  n + 1 
+          Nothing -> 1
+    in 
+    let ch = T.index input n in
+    case ch of
+      '^' -> santa2 input (n + 2) len x (y + 1) (Map.insert (Point x y) v grid)
+      'v' -> santa2 input (n + 2) len x (y - 1) (Map.insert (Point x y) v grid)
+      '<' -> santa2 input (n + 2) len (x - 1) y (Map.insert (Point x y) v grid)
+      '>' -> santa2 input (n + 2) len (x + 1) y (Map.insert (Point x y) v grid)
+      _ -> (grid,n,len)
+
+
+      
+{-- 
+-- need to iterate over all T.pack "^" and
+-- grid size == number elements in grid
+-- initial grid has point 0 0 already with a present from santa
+
+ip : initial point
+ig : initial grid with present at 0,0
+len : length of T.Text input
+c0 : 0  initial index iterate through len
+(g,i,l) = (g=grid i=finish index  l=length == len
+
+santa delivers all his presents first
+robo santa delivers all his presents second
+simply count how many 
+--}
+solvePart2 :: T.Text -> Int
+solvePart2 input =
+   let (x0, y0) = (0, 0)
+       len = T.length input
+       c0 = 0 
+   in        
+       let ig = Map.insert (Point x0 y0) 0 emptyGrid
+       in
+         let (gsanta, _, _) = santa2 input c0 len x0 y0 ig
+         in let (grobo, _, _) = santa2 input (c0 + 1) len x0 y0 gsanta
+            in  Map.size grobo
+
 
 -- input has extra double quotes at start and end of input 
 main :: IO ()
