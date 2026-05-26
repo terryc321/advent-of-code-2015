@@ -35,27 +35,30 @@ splitLine = T.splitOn (T.pack "x")
 
 
 
-bar input = let lines = T.lines input in 
-            let firstLine = head lines in 
-            let split = splitLine firstLine in
-            let cnv = map T.unpack split in 
-            let vals = map (\s -> TR.readMaybe s :: Maybe Int ) cnv in
-            case vals of
-              [Just a , Just b , Just c] -> Just (cnv,vals,present a b c)
-              _ -> Nothing  
+solvePart1 input =
+  let lines = T.lines input in 
+    let res = map (\line -> 
+         let split = splitLine line in
+           let cnv = map T.unpack split in 
+             let vals = map (\s -> TR.readMaybe s :: Maybe Int ) cnv in
+               case vals of
+                 [Just a , Just b , Just c] -> present a b c --- Just (cnv,vals,present a b c)
+                 _ -> 0 --- Nothing
+                  ) lines in
+      let sum = foldr (+) 0 res in
+        sum 
               
+
               
 
 main :: IO () 
 main = do 
         input <- TIO.readFile "../input.txt"
-        let lines = T.lines input 
-        let firstLine = head lines 
-        TIO.putStrLn firstLine
-        let split = splitLine firstLine
-        putStrLn "sanity"
-         
+        let part1 = solvePart1 input
+        putStrLn $ "part 1 solution " ++ show part1 ++ " and goodnight"
+
         
+-- part 1 solution 1606483 and goodnight        
         
         
 
