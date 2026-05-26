@@ -96,6 +96,23 @@ right > case
 move santa two string indexes each time - skipping over robo santas instructions
 similarly robo santa 
 --}
+
+{-- 
+-- need to iterate over all T.pack "^" and
+-- grid size == number elements in grid
+-- initial grid has point 0 0 already with a present from santa
+
+ip : initial point
+ig : initial grid with present at 0,0
+len : length of T.Text input
+c0 : 0  initial index iterate through len
+(g,i,l) = (g=grid i=finish index  l=length == len
+
+santa delivers all his presents first
+robo santa delivers all his presents second
+simply count how many 
+--}
+
 santa2 :: T.Text -> Int -> Int -> Int -> Int -> Grid -> (Grid,Int,Int) 
 santa2 input n len x y grid =
   if n >= len then
@@ -118,23 +135,6 @@ santa2 input n len x y grid =
       '>' -> santa2 input (n + 2) len (x + 1) y (Map.insert (Point x y) v grid)
       _ -> (grid,n,len)
 
-
-      
-{-- 
--- need to iterate over all T.pack "^" and
--- grid size == number elements in grid
--- initial grid has point 0 0 already with a present from santa
-
-ip : initial point
-ig : initial grid with present at 0,0
-len : length of T.Text input
-c0 : 0  initial index iterate through len
-(g,i,l) = (g=grid i=finish index  l=length == len
-
-santa delivers all his presents first
-robo santa delivers all his presents second
-simply count how many 
---}
 solvePart2 :: T.Text -> Int
 solvePart2 input =
    let (x0, y0) = (0, 0)
