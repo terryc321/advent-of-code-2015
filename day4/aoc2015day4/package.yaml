@@ -24,8 +24,8 @@ dependencies:
 - text
 - bytestring
 - containers
-- puremd5
 - utf8-string
+- pureMD5
 
 ghc-options:
 - -Wall
@@ -54,8 +54,8 @@ executables:
     - text
     - bytestring
     - containers
-    - puremd5
     - utf8-string
+    - pureMD5
 
 tests:
   aoc2015day4-test:
