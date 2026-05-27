@@ -2,7 +2,7 @@ module Main (main) where
 
 import Text.Parsec
 import Text.Parsec.String
-import Lib (Grid3 , createGrid3 )
+import Lib (Grid3 , createGrid3 , instructionParser , createGrid2 , createGrid3 , (!)   )
 
 main = do input <- readFile "../input.txt"
           let split = lines input
@@ -25,8 +25,12 @@ main = do input <- readFile "../input.txt"
 
           let finalGrid3 = createGrid3 successes
           -- Count how many lights are on (Part 2 answer)
-          let lightsOn3 = length [ () | x <- [0..999], y <- [0..999], finalGrid3 ! (x,y) ]
-          putStrLn $ "Lights that are on: " ++ show lightsOn3
+          -- Assuming finalGrid3 stores Ints and you want to sum them if they are > 0
+          let lightsOn3 = [ val | x <- [0..999], y <- [0..999], let val = finalGrid3 ! (x,y), val > 0 ]
+          let totalSum = sum lightsOn3
+          putStrLn $ "Total brightness : " ++ show totalSum
+          
+          
 
        
 
