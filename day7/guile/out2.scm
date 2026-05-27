@@ -1342,15 +1342,13 @@
 
   
 #|
-
-scheme@(#{ g26293}#) [36]> (solve)
+,t (solve)
 (0 0 1 1 1 1 1 0 1 1 0 0 1 1 0 0) 
-
-16076
+16076 
+$10 = #t
+;; 0.014754s real time, 0.014748s run time.  0.000000s spent in GC.
 
 saying output wire A should be 16,076
-
-$216 = #t
 
 |#
 

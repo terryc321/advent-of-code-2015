@@ -1,0 +1,217 @@
+
+suggestions 
+
+-- for now put all development of advent code into one Main.hs
+
+import           Control.Monad                  (void)
+import           Control.Monad.Combinators      (some, many)
+import           Control.Monad.Extra            (findM)
+import           Data.Bits                      (shiftL, shiftR, (.&.), (.|.), complement)
+import           Data.Map                       (Map)
+import qualified Data.Map                       as M
+import           Data.Text                      (Text)
+import qualified Data.Text                      as T
+import           Data.Void                      (Void)
+import           Text.Megaparsec
+import           Text.Megaparsec.Char           (alphaNumChar, char, letterChar, space1, string)
+import           Text.Megaparsec.Char.Lexer     (decimal, skipLineComment)
+import           System.IO                      (hFlush, stdout)
+
+-- | The type of our parser
+type Parser = Parsec Void Text
+
+-- | The AST for a circuit instruction
+data Instruction
+  = AssignLit Int      -- ^ 123 -> x
+  | AssignVar String   -- ^ y -> x
+  | AndLit Int String  -- ^ 123 AND y -> z
+  | AndVar String String -- ^ x AND y -> z
+  | OrVar String String  -- ^ x OR y -> z
+  | LShift String Int  -- ^ x LSHIFT 2 -> z
+  | RShift String Int  -- ^ x RSHIFT 2 -> z
+  | NotVar String      -- ^ NOT x -> y
+  deriving (Show, Eq)
+
+-- | The full state: A map of wire names to their instructions
+type Circuit = Map String Instruction
+
+-- | Parse an integer (16-bit signal)
+-- Megaparsec's decimal returns Int by default
+parseNumber :: Parser Int
+parseNumber = decimal
+
+-- | Parse a wire name (lowercase letters)
+parseWire :: Parser String
+parseWire = some letterChar
+
+-- | Parse a specific keyword, skipping surrounding whitespace
+keyword :: String -> Parser ()
+keyword s = void (string s) <* space1
+
+-- | Parse the left-hand side of an instruction
+parseLHS :: Parser Instruction
+parseLHS = do
+  space1
+  -- Try numeric literal first
+  n <- try (parseNumber <* space1)
+  -- If we got a number, check if it's an "AND" with a wire, or just an assignment
+  -- Format: "NUM AND wire -> dest" OR "NUM -> dest"
+  -- But the problem usually separates these clearly.
+  -- Let's parse the full instruction line structure instead of just LHS to be safe.
+  fail "Should parse full line"
+
+-- | Parse a single instruction line
+parseInstruction :: Parser Instruction
+parseInstruction = do
+  space1
+  -- Try patterns in order of specificity
+  
+  -- Pattern: NOT wire -> dest
+  (,) <$> (keyword "NOT" *> parseWire) 
+      <*> (keyword "->" *> parseWire)
+      >>= \(w, d) -> return (NotVar w) -- Wait, this returns (String, String), need to wrap
+  
+  -- Actually, let's restructure to return the full instruction directly
+  where
+    parseInst = do
+      space1
+      -- 1. NOT x -> y
+      (,) <$> (keyword "NOT" *> parseWire) 
+          <*> (keyword "->" *> parseWire) >>= \(w, d) -> return (NotVar w) -- No, need to handle the return
+    
+    -- Let's do a cleaner approach: parse components, then construct
+    tryNot = do
+      w <- keyword "NOT" *> parseWire
+      _ <- keyword "->"
+      d <- parseWire
+      return (NotVar w) -- Wait, the NotVar constructor takes the source wire. 
+      -- We need to map the result to the destination wire later? 
+      -- No, the Instruction should represent the operation that produces the destination.
+      -- So: NotVar "x" means "NOT x -> [current dest]". 
+      -- But we are parsing "NOT x -> y". The destination 'y' is the key in the map.
+      -- So the AST should probably be: (Operation, Destination)
+      -- But to keep it simple, let's assume the parser returns the operation and we bind the dest separately?
+      -- Standard AoC Day 7 parser usually returns: (String Dest, Operation Source)
+      -- Let's adjust the AST to be: (String Dest, Op)
+      fail "Refactoring needed"
+
+-- | Let's restart the parser logic to be robust.
+-- We will parse "LeftPart -> RightPart" and return (RightPart, LeftPartOp)
+-- Where RightPart is the destination wire name.
+
+parseOp :: Parser (String, Instruction)
+parseOp = do
+  space1
+  -- 1. NOT x -> y
+  (,) <$> (keyword "NOT" *> parseWire) 
+      <*> (keyword "->" *> parseWire) >>= \(src, dst) -> return (dst, NotVar src)
+  -- 2. x AND y -> z (Wire AND Wire)
+  <|> do
+    w1 <- parseWire
+    keyword "AND"
+    w2 <- parseWire
+    keyword "->"
+    dst <- parseWire
+    return (dst, AndVar w1 w2)
+  -- 3. NUM AND y -> z (Lit AND Wire)
+  <|> do
+    n <- parseNumber
+    keyword "AND"
+    w2 <- parseWire
+    keyword "->"
+    dst <- parseWire
+    return (dst, AndLit n w2)
+  -- 4. x OR y -> z
+  <|> do
+    w1 <- parseWire
+    keyword "OR"
+    w2 <- parseWire
+    keyword "->"
+    dst <- parseWire
+    return (dst, OrVar w1 w2)
+  -- 5. x LSHIFT NUM -> z
+  <|> do
+    w1 <- parseWire
+    keyword "LSHIFT"
+    n <- parseNumber
+    keyword "->"
+    dst <- parseWire
+    return (dst, LShift w1 n)
+  -- 6. x RSHIFT NUM -> z
+  <|> do
+    w1 <- parseWire
+    keyword "RSHIFT"
+    n <- parseNumber
+    keyword "->"
+    dst <- parseWire
+    return (dst, RShift w1 n)
+  -- 7. NUM -> x (Lit Assignment)
+  <|> do
+    n <- parseNumber
+    keyword "->"
+    dst <- parseWire
+    return (dst, AssignLit n)
+  -- 8. x -> y (Var Assignment)
+  <|> do
+    src <- parseWire
+    keyword "->"
+    dst <- parseWire
+    return (dst, AssignVar src)
+
+-- | Parse the entire input
+parseCircuit :: Parser Circuit
+parseCircuit = M.fromList <$> many (parseOp <* space1)
+
+-- | Evaluation with memoization
+type Memo = Map String Int
+
+-- | Evaluate a wire, updating the memo
+evalWire :: String -> Circuit -> Memo -> (Int, Memo)
+evalWire wire circuit memo
+  | Just val <- M.lookup wire memo = (val, memo)
+  | otherwise = 
+      case M.lookup wire circuit of
+        Nothing -> error $ "Wire " ++ wire ++ " not found in circuit"
+        Just instr -> 
+          let (val, newMemo) = evalInstr instr circuit memo
+          in (val, M.insert wire val newMemo)
+
+evalInstr :: Instruction -> Circuit -> Memo -> (Int, Memo)
+evalInstr (AssignLit n) _ memo = (n .&. 0xFFFF, memo)
+evalInstr (AssignVar w) circuit memo = evalWire w circuit memo
+evalInstr (AndLit n w) circuit memo = 
+  let (v, m) = evalWire w circuit memo
+  in (n .&. v .&. 0xFFFF, m)
+evalInstr (AndVar w1 w2) circuit memo =
+  let (v1, m1) = evalWire w1 circuit memo
+      (v2, m2) = evalWire w2 circuit m1
+  in (v1 .&. v2 .&. 0xFFFF, m2)
+evalInstr (OrVar w1 w2) circuit memo =
+  let (v1, m1) = evalWire w1 circuit memo
+      (v2, m2) = evalWire w2 circuit m1
+  in (v1 .|. v2 .&. 0xFFFF, m2)
+evalInstr (LShift w n) circuit memo =
+  let (v, m) = evalWire w circuit memo
+  in ((v `shiftL` n) .&. 0xFFFF, m)
+evalInstr (RShift w n) circuit memo =
+  let (v, m) = evalWire w circuit memo
+  in ((v `shiftR` n) .&. 0xFFFF, m)
+evalInstr (NotVar w) circuit memo =
+  let (v, m) = evalWire w circuit memo
+  -- NOT in Haskell is bitwise complement on infinite bits, so we mask to 16 bits
+  in ((complement v) .&. 0xFFFF, m)
+
+main :: IO ()
+main = do
+  input <- T.pack <$> readFile "input.txt" -- Ensure you have an input.txt file
+  
+  case parse parseCircuit "" input of
+    Left err -> do
+      putStrLn "Parsing failed:"
+      putStrLn (errorBundlePretty err)
+    Right circuit ->
+      let (val, _) = evalWire "a" circuit M.empty
+      in do
+        putStrLn $ "Signal on wire 'a': " ++ show val
+
+-- Helper to run tests if needed, but for now just main
