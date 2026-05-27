@@ -13,8 +13,6 @@ module Lib
   ) where
 
 
-import Data.Array.IArray (Array, listArray, (!), (!?))
-import Data.Maybe (fromMaybe)
 
 import Text.Parsec
 import Text.Parsec.String (Parser)
@@ -65,16 +63,6 @@ parseInput :: String -> [Instruction]
 parseInput input = case parse (instructionParser `sepBy` newline) "" input of
   Left err -> error (show err)
   Right instrs -> instrs
-
-
-
--- Type alias for readability
-type Grid = Array (Int, Int) Bool
-
--- Create a grid where every light is False (Off)
-initialGrid :: Grid
-initialGrid = listArray ((0, 0), (999, 999)) (repeat False)
-
 
 
 solvePart1 x = 123

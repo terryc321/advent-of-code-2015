@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      Grid
       Lib
   other-modules:
       Paths_aoc2015day6
@@ -34,7 +35,8 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      array
+    , base >=4.7 && <5
     , containers
     , parsec
     , text
@@ -51,6 +53,7 @@ executable aoc2015day6-exe
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aoc2015day6
+    , array
     , base >=4.7 && <5
     , containers
     , parsec
@@ -70,6 +73,7 @@ test-suite aoc2015day6-test
   build-depends:
       HUnit
     , aoc2015day6
+    , array
     , base >=4.7 && <5
     , containers
     , parsec

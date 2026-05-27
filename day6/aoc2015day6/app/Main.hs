@@ -1,9 +1,12 @@
 module Main (main) where
 
+import Data.Array.Unboxed (UArray, (!))
 
 import Text.Parsec (eof , parse)
 import Text.Parsec.String (parseFromFile)
+
 import Lib (instructionParser, Instruction)
+import Grid (createGrid)
 
 
 main = do input <- readFile "../input.txt"

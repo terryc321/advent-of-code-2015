@@ -24,7 +24,7 @@ dependencies:
 - parsec
 - text
 - containers
-
+- array
 
 ghc-options:
 - -Wall
@@ -53,6 +53,7 @@ executables:
     - parsec
     - text
     - containers
+    - array
 
 tests:
   aoc2015day6-test:
@@ -67,3 +68,5 @@ tests:
     - HUnit
     - parsec 
     - text 
+    - array
+
