@@ -3,8 +3,10 @@
 module Main (main) where
 
 import Test.HUnit
-import Text.Parsec (parse, eof)
-import Text.Parsec.String (Parser)
+
+import Text.Parsec 
+import Text.Parsec.String 
+
 import qualified Data.Text as T
 import Control.Monad (void) -- Add this import
 import System.Exit (exitFailure, exitSuccess)
@@ -12,7 +14,7 @@ import System.Exit (exitFailure, exitSuccess)
 -- ... (your imports and test definitions) ...
 
 
-import Lib (Instruction(..), Command(..), Coord(..), instructionParser)
+import Lib (Instruction(..), Command(..), Coord(..), instructionParser , sepBy , spaces , newline)
 
 -- ... (keep your parseInstruction and test cases exactly as before) ...
 
