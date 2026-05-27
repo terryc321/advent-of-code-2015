@@ -21,11 +21,10 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- parsec
 - text
-- bytestring
 - containers
-- utf8-string
-- pureMD5
+
 
 ghc-options:
 - -Wall
@@ -51,6 +50,9 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - aoc2015day6
+    - parsec
+    - text
+    - containers
 
 tests:
   aoc2015day6-test:
@@ -62,3 +64,6 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - aoc2015day6
+    - HUnit
+    - parsec 
+    - text 

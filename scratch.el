@@ -24,9 +24,6 @@
   (save-buffer))
 
 
-;; ============= BUFfer MENU COnfiguring !! ===================
-;; Buffer menu k = kill
-;; Buffer menu x to execute
 (defun my-fix ()
     (interactive)
   (dolist (p (number-sequence 6 25))
@@ -36,21 +33,6 @@
       (find-file-other-window "../../"))))
 
 (my-fix)
-
-(defun show-next (arg)
-  "Show next line's buffer in another window."
-  (interactive "p")
-  (next-line arg)
-  (Buffer-menu-switch-other-window))
-
-(defun show-previous (arg)
-  "Show previous line's buffer in another window."
-  (interactive "p")
-  (previous-line arg)
-  (Buffer-menu-switch-other-window))
-
-(define-key Buffer-menu-mode-map "\M-n" 'show-next)
-(define-key Buffer-menu-mode-map "\M-p" 'show-previous)   
 
 
 
