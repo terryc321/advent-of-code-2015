@@ -35,6 +35,11 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , bytestring
+    , containers
+    , pureMD5
+    , text
+    , utf8-string
   default-language: Haskell2010
 
 executable aoc2015day8-exe
@@ -49,6 +54,11 @@ executable aoc2015day8-exe
   build-depends:
       aoc2015day8
     , base >=4.7 && <5
+    , bytestring
+    , containers
+    , pureMD5
+    , text
+    , utf8-string
   default-language: Haskell2010
 
 test-suite aoc2015day8-test
@@ -62,6 +72,12 @@ test-suite aoc2015day8-test
       test
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      aoc2015day8
+      HUnit
+    , aoc2015day8
     , base >=4.7 && <5
+    , bytestring
+    , containers
+    , pureMD5
+    , text
+    , utf8-string
   default-language: Haskell2010
