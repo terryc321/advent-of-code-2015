@@ -51,6 +51,7 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - aoc2015day9
+    - containers
 
 tests:
   aoc2015day9-test:
@@ -62,3 +63,5 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - aoc2015day9
+    - containers
+
