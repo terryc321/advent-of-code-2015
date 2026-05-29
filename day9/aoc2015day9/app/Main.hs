@@ -8,6 +8,10 @@ import Lib (Trip(..)
            , look
            , permutation
            , development
+           , emeasure
+           , minBySecond
+           , part1
+           , part2
           )
 
 import Control.Monad (mapM_)
@@ -21,8 +25,9 @@ import qualified Data.List as L
 
 
 main :: IO ()
-main = do input <- readFile "../input.txt"       
-          mapM_ (\s -> putStrLn $ show s) (development input)
+main = do input <- readFile "../input.txt"
+          -- input <- readFile "../example.txt"          
+          mapM_ (\s -> putStrLn $ show s) (part1 input)
        -- let me = ["a","b","c"]
        -- putStrLn $ "fx = " ++ show (fx me)
        -- putStrLn $ "gx = " ++ show (foldr (++) [] (gx (fx me)))

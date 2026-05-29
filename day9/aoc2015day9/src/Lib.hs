@@ -7,6 +7,10 @@ module Lib
     , look
     , permutation
     , development
+    , emeasure
+    , minBySecond
+    , part1
+    , part2
     ) where
 
 {--
@@ -21,7 +25,7 @@ elements !! 0 2 and 4
 
 --}
 
-import Data.Map (Map)
+-- import Data.Map (Map)
 import qualified Data.Map as M
 
 import Data.List (List)
@@ -98,7 +102,7 @@ initially
 --}
 
 --- IO !!
--- look :: String -> [String] -> (Map (String,String) Int) -> Int ->  IO () 
+-- look :: String -> [String] -> (M.Map (String,String) Int) -> Int ->  IO () 
 -- look d [] map ti = ti -- no more destinations
 -- look d (h : t) map ti = case M.lookup (d,h) map of
 --                           Just d -> 
@@ -135,23 +139,42 @@ permutation xs = hx (fx xs)
 --            else hx (gx xs)
 
 -- measure distance of a trip
-measure :: [String] -> (Map (String,String) Int) -> Int -> Int
-measure []  _ mdist = mdist
-measure [ _ ] _ mdist = mdist
-measure (a : b : t) mmap mdist = case M.lookup (a,b) mmap of
-                                   Just x -> measure t mmap (mdist + x )
-                                   Nothing -> -999
+emeasure :: [String] -> (M.Map (String,String) Int) -> Int -> Int
+emeasure []  mm d  = d
+emeasure [ _ ] mm d = d
+emeasure (a : b : t) mm d = case M.lookup (a,b) mm of
+                             Just x -> emeasure (b : t) mm (d + x )
+                             Nothing -> -999
 
-                                   
-
+-- development :: String -> [([String], Int)]
 development input =  let trips = theTrips input
                      in let places = allPlaces trips
                             distMap = distances trips
                         in  let routes = permutation places
-                            in routes
-                       
-       
-                       
+                            in map (\route -> (route , emeasure route distMap 0)) routes 
+
+
+minBySecond :: ([String], Int) -> ([String], Int) -> ([String], Int)
+minBySecond a b = 
+    if (snd a) <= (snd b)
+    then a 
+    else b
+
+{--
+find the lowest solution
+filter for any solutions that are also the lowest 
+--}
+part1 input =
+  let out = (development input)
+  in let low = foldr (minBySecond) (["dummy","path","should","not","see"],999999999) out
+     in let (_ , score) = low
+              in filter (\s -> (snd s) == score) out
+
+--  let (_,score) = low in filter (\s -> (snd s) == score) low 
+
+part2 input = 456
+
+              
                              
                              
   
