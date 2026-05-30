@@ -1,0 +1,71 @@
+haskell parts 1 and 2 complete in less than a second 
+guile takes 16,000 times longer to compute ... huh
+
+ (main) ~/code/advent-code/advent-of-code-2015/day10/aoc2015day10$ stack build
+ (main) ~/code/advent-code/advent-of-code-2015/day10/aoc2015day10$ time stack run 
+hello
+part1 length is 252594
+part2 length is 3579328
+
+real	0m0.466s
+user	0m0.443s
+sys	0m0.106s
+ (main) ~/code/advent-code/advent-of-code-2015/day10/aoc2015day10$ 
+
+guile scheme on 50 runs 
+
+scheme@(guile-user)> ,t (solve)
+0 : 10  
+1 : 10  
+2 : 12  
+3 : 18  
+4 : 22  
+5 : 28  
+6 : 38  
+7 : 48  
+8 : 60  
+9 : 76  
+10 : 100  
+11 : 118  
+12 : 146  
+13 : 192  
+14 : 246  
+15 : 328  
+16 : 428  
+17 : 562  
+18 : 732  
+19 : 970  
+20 : 1250  
+21 : 1622  
+22 : 2128  
+23 : 2754  
+24 : 3592  
+25 : 4728  
+26 : 6162  
+27 : 8072  
+28 : 10504  
+29 : 13736  
+30 : 17874  
+31 : 23248  
+32 : 30322  
+33 : 39392  
+34 : 51438  
+35 : 67070  
+36 : 87402  
+37 : 114056  
+38 : 148740  
+39 : 193828  
+40 : 252594  
+41 : 329356  
+42 : 429204  
+43 : 559092  
+44 : 729412  
+45 : 950310  
+46 : 1239364  
+47 : 1615860  
+48 : 2106324  
+49 : 2746068  
+50 : 3579328  
+$2 = #t
+;; 8881.529235s real time, 22832.530997s run time.  22244.272971s spent in GC.
+scheme@(guile-user)> 
