@@ -26,17 +26,19 @@ dependencies:
 - containers
 - utf8-string
 - pureMD5
+- array  # Often optional as it's included, but good to be explicit
+- mtl    # Optional, if you use Monad transformers later
 
 ghc-options:
-- -Wall
-- -Wcompat
-- -Widentities
-- -Wincomplete-record-updates
-- -Wincomplete-uni-patterns
-- -Wmissing-export-lists
-- -Wmissing-home-modules
-- -Wpartial-fields
-- -Wredundant-constraints
+ -Wall
+ -Wcompat
+ -Widentities
+ -Wincomplete-record-updates
+ -Wincomplete-uni-patterns
+ -Wmissing-export-lists
+ -Wmissing-home-modules
+ -Wpartial-fields
+ -Wredundant-constraints
 
 library:
   source-dirs: src
@@ -51,6 +53,8 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - aoc2015day11
+    - array  # Often optional as it's included, but good to be explicit
+    - mtl    # Optional, if you use Monad transformers later
 
 tests:
   aoc2015day11-test:
