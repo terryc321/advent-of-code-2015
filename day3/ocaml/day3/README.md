@@ -1,6 +1,14 @@
 
 # Readme
 
+start a project - call it day3 
+
+```
+dune init proj day3 
+```
+
+solve the problem ... then see if it solves it correctly ...
+
 ```
 dune build
 dune exec day3
