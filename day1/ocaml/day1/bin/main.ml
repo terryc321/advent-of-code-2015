@@ -2,6 +2,7 @@
 let cwd = Sys.getcwd();;
 
 
+
 (*
   # a one liner - ensures in correct opam environment
   opam exec -- dune init proj project_name
@@ -48,6 +49,10 @@ let read_file filename =
   with End_of_file ->
     close_in chan;
     List.rev !lines ;;
+
+
+(* really just one line - but hey *)
+let lines = List.hd (read_file "../../input")
 
 (* how do i print a small int to console ? *)
 (* how do i print a big int to console ? *)
@@ -120,25 +125,10 @@ let part2 = santa2
 
 
 (* toplevel anonymous definitions use unit ()  *)
-let () = print_string "current directory : " ;
-         print_endline cwd ; 
-         print_string "dune root : (" ;
-         print_string root ;
-         print_endline ")" ;         
-         let lines = read_file "../../input"
-         in let line = List.hd lines
-            in print_string "the line has " ;
-               print_int (String.length line) ;
-               print_string " characters." ;
-               print_newline () ;
-               print_string "santa1 ends up on floor " ;
-               print_int (santa1 line) ;
-               print_newline () ;
-               print_string "santa2 enters basement at character " ;
-               print_int (santa2 line) ;
-               print_newline () ;
-               
-               
+let _ = let p = santa1 lines in Printf.printf "part 1 solution : santa end on floor %d\n" p
+let _ = let p = santa2 lines in Printf.printf "part 2 solution : santa enters basement at %d\n" p
+
+
 
 
 
