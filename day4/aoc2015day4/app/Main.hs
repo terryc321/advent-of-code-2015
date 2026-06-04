@@ -52,11 +52,11 @@ solvePart2 s = iter2 s 0
 -- input has extra double quotes at start and end of input 
 main :: IO ()
 main = do  let input = "bgvyzdsv"
-           let example1 = solvePart1 "abcdef"
-           let example2 = solvePart1 "pqrstuv"
+           -- let example1 = solvePart1 "abcdef"
+           -- let example2 = solvePart1 "pqrstuv"
+           -- putStrLn $ "example 1 = " ++ show example1 ++ " and goodnight"
+           -- putStrLn $ "example 2 = " ++ show example2 ++ " and goodnight"
            let part1 = solvePart1 input 
-           putStrLn $ "example 1 = " ++ show example1 ++ " and goodnight"
-           putStrLn $ "example 2 = " ++ show example2 ++ " and goodnight"
            putStrLn $ "part 1  = " ++ show part1 ++ " and goodnight"           
            let part2 = solvePart2 input
            putStrLn $ "part 2 solution " ++ show part2 ++ " and goodnight"
