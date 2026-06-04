@@ -1,6 +1,10 @@
 (* ai slop
    suggested angstrom
    opam install angstrom 
+
+   ;; current directory and change directory nuisance
+   Sys.getcwd();;
+   Sys.chdir("../");;
    *)
 
 open Str
